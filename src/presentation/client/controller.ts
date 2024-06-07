@@ -1,7 +1,7 @@
-import { UpdateClientMedicalInformationDto } from "../../domain/dtos/client/update-medical-information.dto";
-import { Request, Response } from "express";
-import { ClientRepository } from "../../domain/repositories/client/client.repository";
 import { CustomError } from "../../domain/errors/custom.error";
+import { ClientRepository } from "../../domain/repositories/client/client.repository";
+import { Request, Response } from "express";
+import { UpdateClientMedicalInformationDto } from "../../domain/dtos/client/update-medical-information.dto";
 
 export class ClientController {
   constructor(private readonly clientRepository: ClientRepository) {}
@@ -24,11 +24,15 @@ export class ClientController {
       this.handleError(error, res);
     }
   };
-  public readClientsByUserId = async (req: Request, res: Response) => {
+  public readClient = async (req: Request, res: Response) => {
     try {
-      const { id } = req.body.user;
+      const { id: trainerId } = req.body.user;
+      const { clientId }: any = req.query;
 
-      const clients = await this.clientRepository.readClientsByUserId(id);
+      const clients = await this.clientRepository.readClient(
+        clientId,
+        trainerId
+      );
 
       return res.status(200).json(clients);
     } catch (error) {
@@ -36,15 +40,11 @@ export class ClientController {
       this.handleError(error, res);
     }
   };
-  public readClientById = async (req: Request, res: Response) => {
+  public readClients = async (req: Request, res: Response) => {
     try {
-      const { id: trainerId } = req.body.user;
-      const { clientId }: any = req.query;
+      const { id } = req.body.user;
 
-      const clients = await this.clientRepository.readClientById(
-        clientId,
-        trainerId
-      );
+      const clients = await this.clientRepository.readClients(id);
 
       return res.status(200).json(clients);
     } catch (error) {
@@ -56,28 +56,33 @@ export class ClientController {
     req: Request,
     res: Response
   ) => {
-    const { data } = req.body;
-    const { id: trainerId } = req.body.user;
+    try {
+      const { data } = req.body;
+      const { id: trainerId } = req.body.user;
 
-    const [error, updateClientMedicalInformationDto] =
-      UpdateClientMedicalInformationDto.create({ ...data, trainerId });
+      const [error, updateClientMedicalInformationDto] =
+        UpdateClientMedicalInformationDto.create({ ...data, trainerId });
+      if (error) {
+        return res.status(400).json({ error });
+      }
 
-    if (error) {
-      return res.status(400).json({ error });
+      const user = await this.clientRepository.updateClientMedicalInformation(
+        updateClientMedicalInformationDto!
+      );
+
+      return res.status(200).json(user);
+    } catch (error) {
+      console.log(error);
+      this.handleError(error, res);
     }
-
-    const user = await this.clientRepository.updateClientMedicalInformation(
-      updateClientMedicalInformationDto!
-    );
-
-    return res.status(200).json(user);
   };
-  public readInviteInformation = async (req: Request, res: Response) => {
+  public readInvite = async (req: Request, res: Response) => {
     try {
       const { inviteId }: any = req.query;
 
-      const inviteInformation =
-        await this.clientRepository.readInviteInformation(inviteId);
+      const inviteInformation = await this.clientRepository.readInvite(
+        inviteId
+      );
 
       return res.status(200).json(inviteInformation);
     } catch (error) {

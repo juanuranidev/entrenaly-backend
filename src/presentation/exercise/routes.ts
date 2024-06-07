@@ -11,22 +11,22 @@ export class ExerciseRoutes {
     const exerciseController = new ExerciseController(exerciseRepositoryImpl);
 
     router.get(
-      "/v1/get-all",
+      "/v1/get",
       [UserMiddleware.getUser],
       exerciseController.readExercises
     );
     router.post(
-      "/v1/create-variant",
+      "/v1/create/variant",
       [UserMiddleware.getUser],
       exerciseController.createVariant
     );
     router.post(
-      "/v1/update-variant",
+      "/v1/update/variant",
       [UserMiddleware.getUser],
       exerciseController.updateVariant
     );
     router.get(
-      "/v1/get-categories",
+      "/v1/get/categories",
       exerciseController.readExercisesCategories
     );
     router.get(

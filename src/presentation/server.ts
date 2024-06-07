@@ -34,9 +34,6 @@ export class Server {
     // Routes
     this.app.use(this.routes);
 
-    // * Db
-    // this.dbClient.execute();
-
     this.app.listen(this.port, () => {
       console.log(`Server running on port ${this.port} 🚀`);
     });

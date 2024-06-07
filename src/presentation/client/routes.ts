@@ -11,29 +11,26 @@ export class ClientRoutes {
     const exerciseController = new ClientController(clientRepositoryImpl);
 
     router.get(
-      "/v1/get-invite",
+      "/v1/get/invite",
       [UserMiddleware.getUser],
       exerciseController.readInviteByUserId
     );
     router.get(
-      "/v1/get-clients-by-user-id",
+      "/v1/get/clients",
       [UserMiddleware.getUser],
-      exerciseController.readClientsByUserId
+      exerciseController.readClients
     );
     router.get(
-      "/v1/get-client-by-id",
+      "/v1/get/client",
       [UserMiddleware.getUser],
-      exerciseController.readClientById
+      exerciseController.readClient
     );
     router.post(
-      "/v1/update-client-medical-information",
+      "/v1/update/client-medical-information",
       [UserMiddleware.getUser],
       exerciseController.updateClientMedicalInformation
     );
-    router.get(
-      "/v1/read/invite-information",
-      exerciseController.readInviteInformation
-    );
+    router.get("/v1/read/invite", exerciseController.readInvite);
 
     return router;
   }
