@@ -4,66 +4,64 @@ import {
   varchar,
   integer,
   pgTable,
-  timestamp,
-  primaryKey,
+  boolean,
 } from "drizzle-orm/pg-core";
+import { users } from "../user/user.schemas";
 
 export const exercises = pgTable("exercises", {
   id: serial("id").primaryKey().notNull(),
   name: varchar("name", { length: 256 }).notNull(),
-  video: varchar("video", { length: 256 }).notNull(),
+  video: varchar("video", { length: 256 }),
+  image: varchar("image", { length: 256 }),
   categoryId: integer("category_id")
     .notNull()
     .references(() => exercisesCategories.id),
+  userId: varchar("user_id").references(() => users.id),
+  isActive: boolean("is_active").notNull().default(true),
 });
 
-export const exercisesRelations = relations(exercises, ({ many }) => ({
-  exercisesToVariants: many(exercisesToVariants),
+export const exercisesRelations = relations(exercises, ({ many, one }) => ({
+  variant: one(variants, {
+    fields: [exercises.id],
+    references: [variants.exerciseId],
+  }),
 }));
 
 export const variants = pgTable("variants", {
   id: serial("id").primaryKey().notNull(),
   name: varchar("name", { length: 256 }).notNull(),
-  video: varchar("video", { length: 256 }).notNull(),
+  video: varchar("video", { length: 256 }),
+  image: varchar("image", { length: 256 }),
   categoryId: integer("category_id")
     .notNull()
     .references(() => exercisesCategories.id),
+  userId: varchar("user_id")
+    .notNull()
+    .references(() => users.id),
+  exerciseId: integer("exercise_id")
+    .notNull()
+    .references(() => exercises.id),
+  isActive: boolean("is_active").notNull().default(true),
 });
-
-export const variantsRelations = relations(variants, ({ many }) => ({
-  exercisesToVariants: many(exercisesToVariants),
-}));
-
-export const exercisesToVariants = pgTable(
-  "exercises_to_variants",
-  {
-    exerciseId: integer("exercise_id")
-      .notNull()
-      .references(() => exercises.id),
-    variantId: integer("variant_id")
-      .notNull()
-      .references(() => variants.id),
-  },
-  (table) => ({
-    pk: primaryKey(table.exerciseId, table.variantId),
-  })
-);
-
-export const exercisesToVariantsRelations = relations(
-  exercisesToVariants,
-  ({ one }) => ({
-    exercise: one(exercises, {
-      fields: [exercisesToVariants.exerciseId],
-      references: [exercises.id],
-    }),
-    exerciseVariant: one(variants, {
-      fields: [exercisesToVariants.variantId],
-      references: [variants.id],
-    }),
-  })
-);
 
 export const exercisesCategories = pgTable("exercises_categories", {
   id: serial("id").primaryKey().notNull(),
   name: varchar("name", { length: 256 }).notNull(),
+});
+
+export const exercisesCategoriesRelations = relations(
+  exercises,
+  ({ many }) => ({
+    exercise: many(exercises, {
+      relationName: "exercisesCategories",
+    }),
+  })
+);
+
+export const exercisesDescriptions = pgTable("exercises_descriptions", {
+  id: serial("id").primaryKey().notNull(),
+  description: varchar("name", { length: 256 }).notNull(),
+  userId: varchar("user_id")
+    .notNull()
+    .references(() => users.id),
 });

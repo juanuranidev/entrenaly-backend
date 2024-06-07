@@ -2,8 +2,21 @@ import { db } from "..";
 import { eq } from "drizzle-orm";
 import { roles } from "../schemas/user/user.schemas";
 import { CustomError } from "../../../domain/errors/custom.error";
-import { exercises, exercisesCategories } from "../schemas";
-import { exercisesCategoriesSeed, exercisesSeed, rolesSeed } from "./data";
+import {
+  exercises,
+  daysOfWeek,
+  plansCategories,
+  exercisesCategories,
+  plansTypes,
+} from "../schemas";
+import {
+  rolesSeed,
+  exercisesSeed,
+  daysOfWeekSeed,
+  plansCategoriesSeed,
+  exercisesCategoriesSeed,
+  plansTypesSeed,
+} from "./data";
 
 async function createRoles() {
   try {
@@ -51,10 +64,6 @@ async function createExercises() {
         .from(exercises)
         .where(eq(exercises.name, exercise.name));
 
-      if (exerciseExist) {
-        console.log(exerciseExist);
-      }
-
       if (!exerciseExist) {
         const [exerciseCategory] = await db
           .select()
@@ -72,9 +81,70 @@ async function createExercises() {
   console.log("Exercises created successfuly ✅");
 }
 
+async function createPlanCategories() {
+  try {
+    for (const planCategory of plansCategoriesSeed) {
+      const [planCategoryExist] = await db
+        .select()
+        .from(plansCategories)
+        .where(eq(plansCategories.name, planCategory.name));
+
+      if (!planCategoryExist) {
+        await db.insert(plansCategories).values(planCategory);
+      }
+    }
+  } catch (error) {
+    throw CustomError.internalServer(
+      `Error creating plans categories: ${error} 🚫`
+    );
+  }
+  console.log("Plans categories created successfuly ✅");
+}
+
+async function createPlansTypes() {
+  try {
+    for (const planType of plansTypesSeed) {
+      const [planTypeExist] = await db
+        .select()
+        .from(plansTypes)
+        .where(eq(plansTypes.name, planType.name));
+
+      if (!planTypeExist) {
+        await db.insert(plansTypes).values(planType);
+      }
+    }
+  } catch (error) {
+    throw CustomError.internalServer(`Error creating plans types: ${error} 🚫`);
+  }
+  console.log("Plans types created successfuly ✅");
+}
+
+async function createDaysOfWeek() {
+  try {
+    for (const dayOfWeek of daysOfWeekSeed) {
+      const [dayOfWeekExist] = await db
+        .select()
+        .from(daysOfWeek)
+        .where(eq(daysOfWeek.name, dayOfWeek.name));
+
+      if (!dayOfWeekExist) {
+        await db.insert(daysOfWeek).values(dayOfWeek);
+      }
+    }
+  } catch (error) {
+    throw CustomError.internalServer(
+      `Error creating days of week: ${error} 🚫`
+    );
+  }
+  console.log("Days of week created successfuly ✅");
+}
+
 (async () => {
   await createRoles();
   await createExercisesCategories();
   await createExercises();
+  await createPlanCategories();
+  await createDaysOfWeek();
+  await createPlansTypes();
   process.exit();
 })();
