@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./src/app.ts",
+    "dev": "nodemon --legacy-watch ./src/app.ts",
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/app.js",
     "db:seed": "ts-node ./src/infraestructure/db/seed",
-    "db:migrations:push": "node -r esbuild-register src/infraestructure/db/migrate.ts",
+    "db:migrations:push": "ts-node src/infraestructure/db/migrate.ts",
     "db:migrations:generate": "drizzle-kit generate:pg"
   },
   "keywords": [],
@@ -34,6 +34,7 @@
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.30.2",
     "env-var": "^7.4.1",
+    "express": "^4.19.2",
     "pg": "^8.11.3",
     "uuid": "^9.0.1"
   }
