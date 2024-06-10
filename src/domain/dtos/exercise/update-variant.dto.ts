@@ -1,26 +1,23 @@
 export class UpdateVariantDto {
   private constructor(
-    public readonly name: string,
-    public readonly userId: string,
-    public readonly variantId: number,
-    public readonly exerciseId: number,
-    public readonly categoryId: number,
-    public readonly video?: string,
-    public readonly image?: string
+    public name: string,
+    public userId: string,
+    public variantId: number,
+    public exerciseId: number,
+    public categoryId: number,
+    public video?: string,
+    public image?: string
   ) {}
 
-  static create(props: { [key: string]: any }): [string?, UpdateVariantDto?] {
+  static create(object: { [key: string]: any }): [string?, UpdateVariantDto?] {
     const { name, categoryId, video, userId, exerciseId, variantId, image } =
-      props;
+      object;
 
-    if (!name) return ["name in UpdateVariantDto is required", undefined];
-    if (!categoryId)
-      return ["categoryId in UpdateVariantDto is required", undefined];
-    if (!userId) return ["userId in UpdateVariantDto is required", undefined];
-    if (!exerciseId)
-      return ["exerciseId in UpdateVariantDto is required", undefined];
-    if (!variantId)
-      return ["variantId in UpdateVariantDto is required", undefined];
+    if (!name) return ["name is required", undefined];
+    if (!categoryId) return ["categoryId is required", undefined];
+    if (!userId) return ["userId is required", undefined];
+    if (!exerciseId) return ["exerciseId is required", undefined];
+    if (!variantId) return ["variantId is required", undefined];
 
     return [
       undefined,
