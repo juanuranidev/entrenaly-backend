@@ -4,9 +4,10 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
+RUN npm install 
+
 COPY . .
 
-RUN npm install 
 ARG BUILD_COMMAND
 ENV BUILD_COMMAND $BUILD_COMMAND
 

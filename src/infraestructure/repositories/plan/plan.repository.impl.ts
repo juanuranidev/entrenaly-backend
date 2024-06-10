@@ -285,6 +285,7 @@ export class PlanRepositoryImpl implements PlanRepository {
           exerciseImage: exercise.exerciseImage,
           exerciseVariant: exercise.exerciseVariant,
           exerciseDescription: exercise.exerciseDescription,
+          hasVariant: Boolean(exercise.exerciseVariant),
         });
       });
 
