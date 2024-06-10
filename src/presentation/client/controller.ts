@@ -5,34 +5,17 @@ import { UpdateClientMedicalInformationDto } from "../../domain/dtos/client/upda
 
 export class ClientController {
   constructor(private readonly clientRepository: ClientRepository) {}
-
   private handleError = (error: unknown, res: Response) => {
     if (error instanceof CustomError) {
       return res.status(error.statusCode).json({ error: error.message });
     }
     return res.status(500).json({ error: "Internal server error" });
   };
-  public readInviteByUserId = async (req: Request, res: Response) => {
-    try {
-      const { id } = req.body.user;
-
-      const invite = await this.clientRepository.readInviteByUserId(id);
-
-      return res.status(200).json(invite);
-    } catch (error) {
-      console.log(error);
-      this.handleError(error, res);
-    }
-  };
   public readClient = async (req: Request, res: Response) => {
     try {
-      const { id: trainerId } = req.body.user;
-      const { clientId }: any = req.query;
+      const { clientId } = req.query;
 
-      const clients = await this.clientRepository.readClient(
-        clientId,
-        trainerId
-      );
+      const clients = await this.clientRepository.readClient(clientId);
 
       return res.status(200).json(clients);
     } catch (error) {
@@ -47,6 +30,32 @@ export class ClientController {
       const clients = await this.clientRepository.readClients(id);
 
       return res.status(200).json(clients);
+    } catch (error) {
+      console.log(error);
+      this.handleError(error, res);
+    }
+  };
+  public readInvite = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.body.user;
+
+      const invite = await this.clientRepository.readInvite(id);
+
+      return res.status(200).json(invite);
+    } catch (error) {
+      console.log(error);
+      this.handleError(error, res);
+    }
+  };
+  public readInviteInformation = async (req: Request, res: Response) => {
+    try {
+      const { inviteId } = req.query;
+
+      const invite = await this.clientRepository.readInviteInformation(
+        inviteId
+      );
+
+      return res.status(200).json(invite);
     } catch (error) {
       console.log(error);
       this.handleError(error, res);
@@ -71,20 +80,6 @@ export class ClientController {
       );
 
       return res.status(200).json(user);
-    } catch (error) {
-      console.log(error);
-      this.handleError(error, res);
-    }
-  };
-  public readInvite = async (req: Request, res: Response) => {
-    try {
-      const { inviteId }: any = req.query;
-
-      const inviteInformation = await this.clientRepository.readInvite(
-        inviteId
-      );
-
-      return res.status(200).json(inviteInformation);
     } catch (error) {
       console.log(error);
       this.handleError(error, res);

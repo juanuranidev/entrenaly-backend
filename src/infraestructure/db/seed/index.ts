@@ -1,21 +1,22 @@
 import { db } from "..";
 import { eq } from "drizzle-orm";
-import { roles } from "../schemas/user/user.schemas";
 import { CustomError } from "../../../domain/errors/custom.error";
+import { roles, subscriptionPlans } from "../schemas/user/user.schemas";
 import {
   exercises,
   daysOfWeek,
+  plansTypes,
   plansCategories,
   exercisesCategories,
-  plansTypes,
 } from "../schemas";
 import {
   rolesSeed,
   exercisesSeed,
   daysOfWeekSeed,
-  plansCategoriesSeed,
-  exercisesCategoriesSeed,
   plansTypesSeed,
+  plansCategoriesSeed,
+  subscriptionPlansSeed,
+  exercisesCategoriesSeed,
 } from "./data";
 
 async function createRoles() {
@@ -34,6 +35,26 @@ async function createRoles() {
     throw CustomError.internalServer(`Error creating roles: ${error} 🚫`);
   }
   console.log("Roles created successfuly ✅");
+}
+
+async function createSubscriptionPlans() {
+  try {
+    for (const subscriptionPlan of subscriptionPlansSeed) {
+      const [subscriptionPlanExist] = await db
+        .select()
+        .from(subscriptionPlans)
+        .where(eq(subscriptionPlans.name, subscriptionPlan.name));
+
+      if (!subscriptionPlanExist) {
+        await db.insert(subscriptionPlans).values(subscriptionPlan);
+      }
+    }
+  } catch (error) {
+    throw CustomError.internalServer(
+      `Error creating subscription plans: ${error} 🚫`
+    );
+  }
+  console.log("Subscription plans created successfuly ✅");
 }
 
 async function createExercisesCategories() {
@@ -141,6 +162,7 @@ async function createDaysOfWeek() {
 
 (async () => {
   await createRoles();
+  await createSubscriptionPlans();
   await createExercisesCategories();
   await createExercises();
   await createPlanCategories();

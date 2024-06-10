@@ -18,6 +18,84 @@ import { CustomError } from "../../../domain/errors/custom.error";
 import { db } from "../../db";
 
 export class ExerciseRepositoryImpl implements ExerciseRepository {
+  async createExercise(
+    createExerciseDto: CreateExerciseDto
+  ): Promise<ExerciseEntity | CustomError> {
+    try {
+      const [newExercise] = await db
+        .insert(exercises)
+        .values({ ...createExerciseDto })
+        .returning({
+          id: exercises.id,
+          name: exercises.name,
+          video: exercises.video,
+          category: exercises.categoryId,
+          image: exercises.image,
+        });
+
+      if (!newExercise) {
+        throw CustomError.internalServer("Error creating the exercise");
+      }
+
+      return ExerciseEntity.fromObject(newExercise);
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+  async createVariant(
+    createVariantDto: CreateVariantDto
+  ): Promise<VariantEntity | CustomError> {
+    try {
+      const [newVariant] = await db
+        .insert(variants)
+        .values({ ...createVariantDto })
+        .returning({
+          id: variants.id,
+          name: variants.name,
+          video: variants.video,
+          category: variants.categoryId,
+          image: variants.image,
+        });
+
+      if (!newVariant) {
+        throw CustomError.internalServer("Error creating the variant");
+      }
+
+      return VariantEntity.fromObject(newVariant);
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+  async createExerciseDescription(
+    createExerciseDescriptionDto: CreateExerciseDescriptionDto
+  ): Promise<ExerciseDescriptionEntity | CustomError> {
+    try {
+      const [newExerciseDescription] = await db
+        .insert(exercisesDescriptions)
+        .values({ ...createExerciseDescriptionDto })
+        .returning({
+          id: exercisesDescriptions.id,
+          description: exercisesDescriptions.description,
+        });
+
+      if (!newExerciseDescription) {
+        throw CustomError.internalServer();
+      }
+
+      return ExerciseDescriptionEntity.fromObject(newExerciseDescription);
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
   async readExercises(
     userId: string,
     name?: string
@@ -60,74 +138,11 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
           hasUser: Boolean(exercise.userId),
         })
       );
-    } catch (error) {
-      return CustomError.internalServer(String(error));
-    }
-  }
-  async createVariant(
-    createVariantDto: CreateVariantDto
-  ): Promise<VariantEntity | CustomError> {
-    try {
-      const [exercise] = await db
-        .select({
-          id: exercises.id,
-        })
-        .from(exercises)
-        .where(eq(exercises.id, createVariantDto.exerciseId));
-
-      if (!exercise) {
-        return CustomError.notFound("Exercise not found");
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
       }
-
-      const [newVariant] = await db
-        .insert(variants)
-        .values({ ...createVariantDto, exerciseId: exercise.id })
-        .returning({
-          id: variants.id,
-          name: variants.name,
-          video: variants.video,
-          category: variants.categoryId,
-          image: variants.image,
-        });
-
-      if (!newVariant) {
-        return CustomError.internalServer("Error creating the variant");
-      }
-
-      return VariantEntity.fromObject(newVariant);
-    } catch (error) {
-      return CustomError.internalServer(String(error));
-    }
-  }
-  async updateVariant(
-    updateVariantDto: UpdateVariantDto
-  ): Promise<VariantEntity | CustomError> {
-    try {
-      const [updatedVariant] = await db
-        .update(variants)
-        .set({
-          name: updateVariantDto.name,
-          video: updateVariantDto.video,
-          userId: updateVariantDto.userId,
-          categoryId: updateVariantDto.categoryId,
-          image: updateVariantDto.image,
-        })
-        .where(eq(variants.id, updateVariantDto.variantId))
-        .returning({
-          id: variants.id,
-          name: variants.name,
-          video: variants.video,
-          category: variants.categoryId,
-          image: variants.image,
-        });
-
-      if (!updatedVariant) {
-        return CustomError.notFound("Variant not found");
-      }
-
-      return VariantEntity.fromObject(updatedVariant);
-    } catch (error) {
-      return CustomError.internalServer(String(error));
+      throw CustomError.internalServer();
     }
   }
   async readExercisesCategories(): Promise<
@@ -141,8 +156,11 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
       return exercisesCategoriesList.map((exerciseCategory) =>
         ExerciseCategoryEntity.fromObject(exerciseCategory)
       );
-    } catch (error) {
-      return CustomError.internalServer(String(error));
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
     }
   }
   async readExercisesDescriptions(
@@ -160,55 +178,48 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
       return exercisesDescriptionsList.map((exerciseDescription) =>
         ExerciseDescriptionEntity.fromObject(exerciseDescription)
       );
-    } catch (error) {
-      return CustomError.internalServer(String(error));
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
     }
   }
-  async createExerciseDescription(
-    createExerciseDescriptionDto: CreateExerciseDescriptionDto
-  ): Promise<ExerciseDescriptionEntity | CustomError> {
+  async updateVariant(
+    updateVariantDto: UpdateVariantDto
+  ): Promise<VariantEntity | CustomError> {
     try {
-      const [newExerciseDescription] = await db
-        .insert(exercisesDescriptions)
-        .values({ ...createExerciseDescriptionDto })
+      const { name, video, userId, categoryId, image, variantId } =
+        updateVariantDto;
+
+      const [updatedVariant] = await db
+        .update(variants)
+        .set({
+          name: name,
+          video: video,
+          userId: userId,
+          categoryId: categoryId,
+          image: image,
+        })
+        .where(eq(variants.id, variantId))
         .returning({
-          id: exercisesDescriptions.id,
-          description: exercisesDescriptions.description,
+          id: variants.id,
+          name: variants.name,
+          video: variants.video,
+          category: variants.categoryId,
+          image: variants.image,
         });
 
-      if (!newExerciseDescription) {
-        return CustomError.internalServer(
-          "Error creating the exercise description"
-        );
+      if (!updatedVariant) {
+        throw CustomError.internalServer();
       }
 
-      return ExerciseDescriptionEntity.fromObject(newExerciseDescription);
-    } catch (error: any) {
-      throw CustomError.internalServer(error);
-    }
-  }
-  async createExercise(
-    createExerciseDto: CreateExerciseDto
-  ): Promise<ExerciseEntity | CustomError> {
-    try {
-      const [newExercise] = await db
-        .insert(exercises)
-        .values({ ...createExerciseDto })
-        .returning({
-          id: exercises.id,
-          name: exercises.name,
-          video: exercises.video,
-          category: exercises.categoryId,
-          image: exercises.image,
-        });
-
-      if (!newExercise) {
-        return CustomError.internalServer("Error creating the exercise");
+      return VariantEntity.fromObject(updatedVariant);
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
       }
-
-      return ExerciseEntity.fromObject(newExercise);
-    } catch (error: any) {
-      throw CustomError.internalServer(error);
+      throw CustomError.internalServer();
     }
   }
 }

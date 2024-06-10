@@ -1,4 +1,11 @@
-import { clients, invites, roles, users } from "../../db/schemas";
+import {
+  clients,
+  invites,
+  roles,
+  subscriptionPlans,
+  users,
+} from "../../db/schemas";
+import { SUBSCRIPTION_PLANS_CONSTANTS } from "../../../domain/constants/user/subscription-plans.constants";
 import { CreateGoogleUserDto } from "../../../domain/dtos/user/create-google-user.dto";
 import { ROLES_CONSTANTS } from "../../../domain/constants/user/role.constants";
 import { UserRepository } from "../../../domain/repositories/user/user.repository";
@@ -17,16 +24,22 @@ export class UserRepositoryImpl implements UserRepository {
           main: users,
           role: roles,
           clientInfo: clients,
+          subscriptionPlan: subscriptionPlans,
         })
         .from(users)
         .where(eq(users.id, id))
         .leftJoin(clients, eq(clients.userId, users.id))
-        .leftJoin(roles, eq(roles.id, users.roleId));
+        .leftJoin(roles, eq(roles.id, users.roleId))
+        .leftJoin(
+          subscriptionPlans,
+          eq(subscriptionPlans.id, users.subscriptionPlanId)
+        );
 
       return UserEntity.fromObject({
         ...userFound.main,
         role: userFound.role,
         clientInfo: userFound.clientInfo,
+        subscriptionPlan: userFound.subscriptionPlan,
       });
     } catch (error) {
       throw CustomError.internalServer(String(error));
@@ -39,11 +52,16 @@ export class UserRepositoryImpl implements UserRepository {
           main: users,
           role: roles,
           clientInfo: clients,
+          subscriptionPlan: subscriptionPlans,
         })
         .from(users)
         .where(eq(users.authId, authId))
         .leftJoin(clients, eq(clients.userId, users.id))
-        .leftJoin(roles, eq(roles.id, users.roleId));
+        .leftJoin(roles, eq(roles.id, users.roleId))
+        .leftJoin(
+          subscriptionPlans,
+          eq(subscriptionPlans.id, users.subscriptionPlanId)
+        );
 
       if (!userFound) {
         return null;
@@ -53,6 +71,7 @@ export class UserRepositoryImpl implements UserRepository {
         ...userFound.main,
         role: userFound.role,
         clientInfo: userFound.clientInfo,
+        subscriptionPlan: userFound.subscriptionPlan,
       });
     } catch (error) {
       throw CustomError.internalServer(String(error));
@@ -83,10 +102,24 @@ export class UserRepositoryImpl implements UserRepository {
         }
 
         const userUuid = uuidAdapter.generate();
+        const [subscriptionPlanFound] = await tx
+          .select({ id: subscriptionPlans.id })
+          .from(subscriptionPlans)
+          .where(
+            eq(
+              subscriptionPlans.name,
+              SUBSCRIPTION_PLANS_CONSTANTS.NAMES.INITIAL
+            )
+          );
 
         const [newUser] = await tx
           .insert(users)
-          .values({ ...registerUserDto, roleId: role.id, id: userUuid })
+          .values({
+            ...registerUserDto,
+            roleId: role.id,
+            id: userUuid,
+            subscriptionPlanId: subscriptionPlanFound.id,
+          })
           .returning();
         if (!newUser) {
           throw CustomError.internalServer("Error creating the user");

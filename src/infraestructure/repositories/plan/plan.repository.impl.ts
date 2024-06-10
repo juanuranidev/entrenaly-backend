@@ -25,39 +25,6 @@ import { PlanEntity } from "../../../domain/entities/plan/plan.entity";
 import { db } from "../../db";
 
 export class PlanRepositoryImpl implements PlanRepository {
-  async readPlansTypes(): Promise<PlanTypeEntity[] | CustomError> {
-    try {
-      const plansTypesList = await db.select().from(plansTypes);
-
-      return plansTypesList.map((planType: any) =>
-        PlanTypeEntity.fromObject(planType)
-      );
-    } catch (error: any) {
-      throw CustomError.internalServer(error);
-    }
-  }
-  async readDaysOfWeek(): Promise<DayOfWeekEntity[] | CustomError> {
-    try {
-      const daysOfWeekList = await db.select().from(daysOfWeek);
-
-      return daysOfWeekList.map((dayOfWeek: any) =>
-        DayOfWeekEntity.fromObject(dayOfWeek)
-      );
-    } catch (error: any) {
-      throw CustomError.internalServer(error);
-    }
-  }
-  async readPlansCategories(): Promise<PlanCategoryEntity[] | CustomError> {
-    try {
-      const planCategoriesList = await db.select().from(plansCategories);
-
-      return planCategoriesList.map((planCategory) =>
-        PlanCategoryEntity.fromObject(planCategory)
-      );
-    } catch (error: any) {
-      throw CustomError.internalServer(error);
-    }
-  }
   async createWeeklyPlan(
     createWeeklyPlanDto: CreateWeeklyPlanDto
   ): Promise<PlanEntity | CustomError> {
@@ -117,71 +84,116 @@ export class PlanRepositoryImpl implements PlanRepository {
           category: planCreated?.categoryId,
         });
       });
-    } catch (error: any) {
-      console.log(error);
-      throw CustomError.internalServer(error);
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+  async readPlansTypes(): Promise<PlanTypeEntity[] | CustomError> {
+    try {
+      const plansTypesList = await db.select().from(plansTypes);
+
+      return plansTypesList.map((planType) =>
+        PlanTypeEntity.fromObject(planType)
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+  async readDaysOfWeek(): Promise<DayOfWeekEntity[] | CustomError> {
+    try {
+      const daysOfWeekList = await db.select().from(daysOfWeek);
+
+      return daysOfWeekList.map((dayOfWeek: any) =>
+        DayOfWeekEntity.fromObject(dayOfWeek)
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+  async readPlansCategories(): Promise<PlanCategoryEntity[] | CustomError> {
+    try {
+      const planCategoriesList = await db.select().from(plansCategories);
+
+      return planCategoriesList.map((planCategory) =>
+        PlanCategoryEntity.fromObject(planCategory)
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
     }
   }
   async readPlansByUserId(userId: string): Promise<PlanEntity[] | CustomError> {
     try {
       const plansList = await db
-        .select()
+        .select({
+          plan: plans,
+          category: plansCategories,
+          type: plansTypes,
+        })
         .from(plans)
-        .where(
-          and(
-            eq(plans.userId, userId),
-            eq(plans.isActive, true),
-            eq(plans.isActive, true)
-          )
-        )
+        .where(and(eq(plans.userId, userId), eq(plans.isActive, true)))
         .orderBy(desc(plans.createdAt))
         .leftJoin(plansTypes, eq(plansTypes.id, plans.typeId))
         .leftJoin(plansCategories, eq(plansCategories.id, plans.categoryId));
 
       return plansList.map((plan: any) =>
         PlanEntity.fromObject({
-          ...plan.plans,
-          user: plan.plans.userId,
-          category: plan.plans_categories.name,
-          type: plan.plans_types.name,
+          ...plan.plan,
+          category: plan.category,
+          type: plan.type,
         })
       );
-    } catch (error: any) {
-      throw CustomError.internalServer(error);
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
     }
   }
   async readPlansByClientId(
     clientId: string
   ): Promise<PlanEntity[] | CustomError> {
     try {
-      const [clientFound] = await db
-        .select()
-        .from(clients)
-        .where(and(eq(clients.id, clientId)));
-
-      const clientPlans = await db
-        .select()
+      const plansList = await db
+        .select({
+          mainInfo: plans,
+          category: plansCategories,
+          type: plansTypes,
+        })
         .from(clientsPlans)
         .where(
           and(
-            eq(clientsPlans.clientId, clientFound.id),
-            eq(plans.isActive, true)
+            eq(clientsPlans.clientId, clientId),
+            eq(clientsPlans.isActive, true)
           )
         )
         .leftJoin(plans, eq(plans.id, clientsPlans.planId))
         .leftJoin(plansTypes, eq(plansTypes.id, plans.typeId))
         .leftJoin(plansCategories, eq(plansCategories.id, plans.categoryId));
 
-      return clientPlans.map((plan: any) =>
+      return plansList.map((plan: any) =>
         PlanEntity.fromObject({
-          ...plan.plans,
-          user: plan.plans.userId,
-          category: plan.plans_categories.name,
-          type: plan.plans_types.name,
+          ...plan.mainInfo,
+          category: plan.category,
+          type: plan.type,
         })
       );
-    } catch (error: any) {
-      throw CustomError.internalServer(error);
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
     }
   }
   async readWeeklyPlan(planId: string): Promise<PlanEntity | CustomError> {
@@ -191,6 +203,7 @@ export class PlanRepositoryImpl implements PlanRepository {
           id: plans.id,
           name: plans.name,
           type: plansTypes,
+          userId: plans.userId,
           category: plansCategories,
           createdAt: plans.createdAt,
         })
@@ -199,7 +212,7 @@ export class PlanRepositoryImpl implements PlanRepository {
         .leftJoin(plansTypes, eq(plansTypes.id, plans.typeId))
         .leftJoin(plansCategories, eq(plansCategories.id, plans.categoryId));
 
-      const clientsPlansList: any = await db
+      const clientsPlansList = await db
         .select({ id: clientsPlans.clientId })
         .from(clientsPlans)
         .where(eq(clientsPlans.planId, planFound.id));
@@ -220,28 +233,29 @@ export class PlanRepositoryImpl implements PlanRepository {
         })
         .from(plansDays)
         .where(
-          and(eq(plansDays.planId, planFound.id), eq(plans.isActive, true))
+          and(eq(plansDays.planId, planFound.id), eq(plansDays.isActive, true))
         )
         .leftJoin(daysOfWeek, eq(daysOfWeek.id, plansDays.dayOfWeekId))
         .leftJoin(
           plansExercises,
           and(
-            eq(plansExercises.planDayId, plansDays.id),
-            eq(plans.isActive, true)
+            eq(plansExercises.isActive, true),
+            eq(plansExercises.planDayId, plansDays.id)
           )
         )
         .leftJoin(
           exercises,
           and(
-            eq(exercises.id, plansExercises.exerciseId),
-            eq(plans.isActive, true)
+            eq(exercises.isActive, true),
+            eq(exercises.id, plansExercises.exerciseId)
           )
         )
         .leftJoin(
           variants,
           and(
+            eq(variants.isActive, true),
             eq(variants.exerciseId, plansExercises.exerciseId),
-            eq(plans.isActive, true)
+            eq(variants.userId, planFound.userId)
           )
         )
         .leftJoin(
@@ -249,52 +263,43 @@ export class PlanRepositoryImpl implements PlanRepository {
           eq(plansCategories.id, exercises.categoryId)
         );
 
-      const exercisesByDay: any = [];
-
+      const exercisesByDay: any = {};
       planDaysList.forEach((exercise: any) => {
-        const { dayOfWeekId } = exercise;
+        const { dayOfWeekId, dayOfWeekName, dayOfWeekOrder, plansDaysId } =
+          exercise;
 
-        const existingDay = exercisesByDay.find(
-          (day: any) => day.dayOfWeekId === dayOfWeekId
-        );
-
-        if (existingDay) {
-          existingDay.exercises.push({
-            exerciseId: exercise.exerciseId,
-            exerciseName: exercise.exerciseName,
-            exerciseVideo: exercise.exerciseVideo,
-            exerciseImage: exercise.exerciseImage,
-            exerciseVariant: exercise.exerciseVariant,
-            exerciseDescription: exercise.exerciseDescription,
-          });
-        } else {
-          exercisesByDay.push({
-            dayOfWeekId: exercise.dayOfWeekId,
-            dayOfWeekName: exercise.dayOfWeekName,
-            dayOfWeekOrder: exercise.dayOfWeekOrder,
-            plansDaysId: exercise.plansDaysId,
-            exercises: [
-              {
-                exerciseId: exercise.exerciseId,
-                exerciseName: exercise.exerciseName,
-                exerciseVideo: exercise.exerciseVideo,
-                exerciseImage: exercise.exerciseImage,
-                exerciseVariant: exercise.exerciseVariant,
-                exerciseDescription: exercise.exerciseDescription,
-              },
-            ],
-          });
+        if (!exercisesByDay[dayOfWeekId]) {
+          exercisesByDay[dayOfWeekId] = {
+            dayOfWeekId,
+            dayOfWeekName,
+            dayOfWeekOrder,
+            plansDaysId,
+            exercises: [],
+          };
         }
+
+        exercisesByDay[dayOfWeekId].exercises.unshift({
+          exerciseId: exercise.exerciseId,
+          exerciseName: exercise.exerciseName,
+          exerciseVideo: exercise.exerciseVideo,
+          exerciseImage: exercise.exerciseImage,
+          exerciseVariant: exercise.exerciseVariant,
+          exerciseDescription: exercise.exerciseDescription,
+        });
       });
+
+      const formattedExercisesByDay = Object.values(exercisesByDay);
 
       return PlanEntity.fromObject({
         ...planFound,
-        days: exercisesByDay,
+        days: formattedExercisesByDay,
         clients: clientsPlansList.map((client: any) => client.id),
       });
-    } catch (error: any) {
-      console.log(error);
-      throw CustomError.internalServer(error);
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
     }
   }
   async updateWeeklyPlan(
@@ -377,6 +382,16 @@ export class PlanRepositoryImpl implements PlanRepository {
         }
 
         for (const client of updateWeeklyPlanDto.clientsIds) {
+          await tx
+            .insert(clientsPlans)
+            .values({
+              planId: planUpdated.id,
+              clientId: client,
+            })
+            .returning();
+        }
+
+        for (const client of updateWeeklyPlanDto.clientsIds) {
           await tx.insert(clientsPlans).values({
             planId: planUpdated.id,
             clientId: client,
@@ -389,9 +404,11 @@ export class PlanRepositoryImpl implements PlanRepository {
           category: planUpdated?.categoryId,
         });
       });
-    } catch (error: any) {
-      console.log(error);
-      throw CustomError.internalServer(error);
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
     }
   }
   async deleteWeeklyPlan(
@@ -442,9 +459,11 @@ export class PlanRepositoryImpl implements PlanRepository {
 
         return PlanEntity.fromObject(planUpdated);
       });
-    } catch (error: any) {
-      console.log(error);
-      throw CustomError.internalServer(error);
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
     }
   }
 }

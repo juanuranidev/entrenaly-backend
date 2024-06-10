@@ -10,25 +10,25 @@ export class PlanRoutes {
     const planRepositoryImpl = new PlanRepositoryImpl();
     const planController = new PlanController(planRepositoryImpl);
 
-    router.get("/v1/get/plan-categories", planController.readPlansCategories);
-    router.get("/v1/get/days-of-week", planController.readDaysOfWeek);
-    router.get("/v1/get/plans-types", planController.readPlansTypes);
     router.post(
       "/v1/create/weekly-plan",
       [UserMiddleware.getUser],
       planController.createWeeklyPlan
     );
+    router.get("/v1/read/plans-types", planController.readPlansTypes);
+    router.get("/v1/read/days-of-week", planController.readDaysOfWeek);
+    router.get("/v1/read/plan-categories", planController.readPlansCategories);
     router.get(
-      "/v1/get/plans-by-user-id",
+      "/v1/read/plans-by-user-id",
       [UserMiddleware.getUser],
       planController.readPlansByUserId
     );
     router.get(
-      "/v1/get/plans-by-client-id",
+      "/v1/read/plans-by-client-id",
       [UserMiddleware.getUser],
       planController.readPlansByClientId
     );
-    router.get("/v1/get/plan-by-id", planController.readWeeklyPlanById);
+    router.get("/v1/read/weekly-plan", planController.readWeeklyPlan);
     router.post(
       "/v1/update/weekly-plan",
       [UserMiddleware.getUser],

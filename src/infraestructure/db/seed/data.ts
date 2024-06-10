@@ -1,9 +1,22 @@
+// User
 export const rolesSeed = [
   { name: "Administrator" },
   { name: "Client" },
   { name: "Trainer" },
 ];
 
+export const subscriptionPlansSeed = [
+  {
+    name: "Inicial",
+  },
+  {
+    name: "Profesional",
+  },
+  {
+    name: "Experto",
+  },
+];
+// Exercise
 export const exercisesCategoriesSeed = [
   { name: "Pecho" },
   { name: "Espalda" },
@@ -301,7 +314,7 @@ export const exercisesSeed = [
   },
 ];
 
-// PLAN
+// Plan
 export const plansCategoriesSeed = [
   {
     name: "Musculación",

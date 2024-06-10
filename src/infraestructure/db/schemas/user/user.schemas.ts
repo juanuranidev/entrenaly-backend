@@ -19,11 +19,15 @@ export const users = pgTable("users", {
   roleId: integer("role_id")
     .notNull()
     .references(() => roles.id),
+  subscriptionPlanId: integer("subscription_plan")
+    .notNull()
+    .references(() => subscriptionPlans.id),
 });
 
 export const usersRelations = relations(users, ({ one, many }) => ({
   client: many(clients),
   invites: one(invites),
+  subscriptionPlan: one(subscriptionPlans),
 }));
 
 export const roles = pgTable("roles", {
@@ -34,3 +38,8 @@ export const roles = pgTable("roles", {
 export const rolesRelations = relations(roles, ({ many }) => ({
   users: many(users),
 }));
+
+export const subscriptionPlans = pgTable("subscription_plans", {
+  id: serial("id").primaryKey().notNull(),
+  name: varchar("name", { length: 256 }).notNull(),
+});
