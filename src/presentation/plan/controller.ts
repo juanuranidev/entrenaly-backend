@@ -13,22 +13,24 @@ export class PlanController {
     }
     return res.status(500).json({ error: "Internal server error" });
   };
-
-  public readPlansCategories = async (req: Request, res: Response) => {
+  public createWeeklyPlan = async (req: Request, res: Response) => {
     try {
-      const planCategories = await this.planRepository.readPlansCategories();
+      const { data } = req.body;
+      const { id: trainerId } = req.body.user;
 
-      return res.status(201).json(planCategories);
-    } catch (error) {
-      console.log(error);
-      this.handleError(error, res);
-    }
-  };
-  public readDaysOfWeek = async (req: Request, res: Response) => {
-    try {
-      const daysOfWeekList = await this.planRepository.readDaysOfWeek();
+      const [error, createWeeklyPlanDto] = CreateWeeklyPlanDto.create({
+        ...data,
+        trainerId,
+      });
+      if (error) {
+        return res.status(400).json({ error });
+      }
 
-      return res.status(201).json(daysOfWeekList);
+      const weeklyPlan = await this.planRepository.createWeeklyPlan(
+        createWeeklyPlanDto!
+      );
+
+      return res.status(201).json(weeklyPlan);
     } catch (error) {
       console.log(error);
       this.handleError(error, res);
@@ -44,25 +46,21 @@ export class PlanController {
       this.handleError(error, res);
     }
   };
-  public createWeeklyPlan = async (req: Request, res: Response) => {
+  public readDaysOfWeek = async (req: Request, res: Response) => {
     try {
-      const { data } = req.body;
-      const { id: trainerId } = req.body.user;
+      const daysOfWeekList = await this.planRepository.readDaysOfWeek();
 
-      const [error, createWeeklyPlanDto] = CreateWeeklyPlanDto.create({
-        ...data,
-        trainerId,
-      });
+      return res.status(201).json(daysOfWeekList);
+    } catch (error) {
+      console.log(error);
+      this.handleError(error, res);
+    }
+  };
+  public readPlansCategories = async (req: Request, res: Response) => {
+    try {
+      const planCategories = await this.planRepository.readPlansCategories();
 
-      if (error) {
-        return res.status(400).json({ error });
-      }
-
-      const weeklyPlan = await this.planRepository.createWeeklyPlan(
-        createWeeklyPlanDto!
-      );
-
-      return res.status(201).json(weeklyPlan);
+      return res.status(201).json(planCategories);
     } catch (error) {
       console.log(error);
       this.handleError(error, res);
@@ -92,11 +90,11 @@ export class PlanController {
       this.handleError(error, res);
     }
   };
-  public readWeeklyPlanById = async (req: Request, res: Response) => {
+  public readWeeklyPlan = async (req: Request, res: Response) => {
     try {
       const { planId } = req.query;
 
-      const plan = await this.planRepository.readWeeklyPlanById(planId);
+      const plan = await this.planRepository.readWeeklyPlan(planId);
 
       return res.status(201).json(plan);
     } catch (error) {
@@ -113,7 +111,6 @@ export class PlanController {
         ...data,
         trainerId,
       });
-
       if (error) {
         return res.status(400).json({ error });
       }

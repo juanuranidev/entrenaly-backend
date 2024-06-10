@@ -8,9 +8,9 @@ export class PlanDayEntity {
   public static fromObject(object: { [key: string]: any }): PlanDayEntity {
     const { id, planId, dayOfWeek } = object;
 
-    if (!id) throw "id is required";
-    if (!planId) throw "planId is required";
-    if (!dayOfWeek) throw "dayOfWeek is required";
+    if (!id) throw "id in PlanDayEntity is required";
+    if (!planId) throw "planId in PlanDayEntity is required";
+    if (!dayOfWeek) throw "dayOfWeek in PlanDayEntity is required";
 
     return new PlanDayEntity(id, planId, dayOfWeek);
   }
