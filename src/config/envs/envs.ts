@@ -4,7 +4,7 @@ import { get } from "env-var";
 const ENVS = {
   PORT: get("PORT").required().asPortNumber(),
   NODE_ENV: get("NODE_ENV").required().asString(),
-  POSTGRESQL_USER: get("POSTGRE_USER").required().asString(),
+  POSTGRESQL_USER: get("POSTGRESQL_USER").required().asString(),
   POSTGRESQL_DB: get("POSTGRESQL_DB").required().asString(),
   POSTGRESQL_HOST: get("POSTGRESQL_HOST").required().asString(),
   POSTGRESQL_PASSWORD: get("POSTGRESQL_PASSWORD").required().asString(),
