@@ -1,5 +1,5 @@
 import "dotenv/config";
-import ENVS from "./src/config/envs/envs";
+import ENVS from "../../config/envs/envs";
 
 export default {
   schema: "src/infraestructure/db/schemas/index.ts",
