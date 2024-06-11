@@ -5,7 +5,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "./schemas/index";
 
 const pool = new Pool({
-  connectionString: ENVS.POSTGRES_URL,
+  connectionString: ENVS.POSTGRESQL_URL,
 });
 
 const db = drizzle(pool, { schema });

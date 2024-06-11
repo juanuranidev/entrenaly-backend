@@ -4,7 +4,7 @@ import { Client } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 
 const client = new Client({
-  connectionString: ENVS.POSTGRES_URL,
+  connectionString: ENVS.POSTGRESQL_URL,
 });
 
 client.connect();
