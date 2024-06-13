@@ -25,8 +25,7 @@ export const exercisesCategoriesSeed = [
   { name: "Bíceps" },
   { name: "Abdomen" },
   { name: "Trapecio" },
-  { name: "Cuádriceps" },
-  { name: "Isquiotibiales" },
+  { name: "Piernas" },
 ];
 
 export const exercisesSeed = [
@@ -312,6 +311,180 @@ export const exercisesSeed = [
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1710992458/entrenaly/Dominada_con_agarre_invertido_obhlb1.webp",
     category: "Espalda",
   },
+  {
+    name: "Press de pecho en máquina",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718150501/entrenaly/press_de_pecho_en_maquina_rz6bru.gif",
+    category: "Pecho",
+  },
+  {
+    name: "Cruces en polea alta",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718150731/entrenaly/cruces_en_polea_alta_ersxeg.gif",
+    category: "Pecho",
+  },
+  {
+    name: "Press de banca",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718150846/entrenaly/press_de_banca_zogkxt.gif",
+    category: "Pecho",
+  },
+  {
+    name: "Fondos en paralelas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718150974/entrenaly/fondos_en_paralelas_aco6aq.gif",
+    category: "Pecho",
+  },
+  {
+    name: "Apertura con mancuernas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718151060/entrenaly/apertura_con_mancuernas_gjy4l9.gif",
+    category: "Pecho",
+  },
+  {
+    name: "Fondos en paralelas con peso",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718151152/entrenaly/fondo_en_paralelas_con_peso_b7swlg.gif",
+    category: "Pecho",
+  },
+  {
+    name: "Press de banca declinado",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718159486/entrenaly/press_de_banca_declinado_skvbau.gif",
+    category: "Pecho",
+  },
+  {
+    name: "Mariposa en máquina",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718159624/entrenaly/mariposa_en_maquina_cvqx5v.gif",
+    category: "Pecho",
+  },
+  {
+    name: "Press de banca con mancuernas declinado",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718159714/entrenaly/press_de_banca_con_mancuernas_declinado_dqivu2.gif",
+    category: "Pecho",
+  },
+  {
+    name: "Press inclinado con agarre cerrado",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718160206/entrenaly/press_inclinado_con_agarre_cerrado_diapfg.gif",
+    category: "Pecho",
+  },
+  {
+    name: "Vuelos frontales sentado",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718160427/entrenaly/vuelos_frontales_sentado_m8lmu9.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Press tras nuca con máquina",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718160525/entrenaly/press_tras_nuca_con_maquina_zmpjs8.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Vuelos laterales de a un brazo",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718160578/entrenaly/vuelos_laterales_1_brazo_rjorhr.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Vuelos laterales de a un brazo en polea",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718160663/entrenaly/vuelos_laterales_1_brazo_polea_udrf9r.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Vuelos posteriores sentado",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718160786/entrenaly/vuelos_posteriores_sentado_g7fyxk.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Press tras nuca",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718160847/entrenaly/press_tras_nuca_vqhgjv.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Extensión de tríceps",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718161357/entrenaly/extension_de_triceps_a2j3xt.gif",
+    category: "Tríceps",
+  },
+  {
+    name: "Patada de tríceps",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718161437/entrenaly/patada_de_triceps_eh3xm4.gif",
+    category: "Tríceps",
+  },
+  {
+    name: "Press francés en banco plano",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718161497/entrenaly/press_frances_en_banco_plano_pxzla1.gif",
+    category: "Tríceps",
+  },
+  {
+    name: "Fondos de tríceps en máquina",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718161602/entrenaly/fondos_de_triceps_en_maquina_idpbto.gif",
+    category: "Tríceps",
+  },
+  {
+    name: "Curl con barra",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718161679/entrenaly/curl_de_biceps_con_barra_kj5ndo.gif",
+    category: "Bíceps",
+  },
+  {
+    name: "Curl alternado con mancuernas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718161803/entrenaly/curl_alternado_con_mancuernas_uyj315.gif",
+    category: "Bíceps",
+  },
+  {
+    name: "Curl en banco scott",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718161896/entrenaly/curl_de_biceps_en_banco_scott_jfeflm.gif",
+    category: "Bíceps",
+  },
+  {
+    name: "Prensa 45",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718245714/entrenaly/prensa_45_ikrzfw.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Extensión de piernas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718245803/entrenaly/extension_de_piernas_qyovs5.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Sentadillas con barra abiertas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718245871/entrenaly/sentadillas_con_barra_abiertas_zkhzxh.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Sentadillas con barra",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718246044/entrenaly/sentadillas_con_barra_jtwang.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Sentadillas búlgaras",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718246101/entrenaly/sentadillas_bulgaras_my40yu.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Sentadillas con mancuernas abiertas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718246211/entrenaly/sentadillas_con_mancuernas_abiertas_igkyyo.gif",
+    category: "Piernas",
+  },
 ];
 
 // Plan
@@ -375,4 +548,3 @@ export const daysOfWeekSeed = [
     order: 7,
   },
 ];
-// EJECICIOS PECHO https://entrenandoc.com/entrenamiento/pectorales/

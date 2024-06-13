@@ -19,154 +19,156 @@ import {
   exercisesCategoriesSeed,
 } from "./data";
 
-async function createRoles() {
+async function createRoles(tx: any) {
   try {
     for (const role of rolesSeed) {
-      const [roleExist] = await db
+      const [roleExist] = await tx
         .select()
         .from(roles)
         .where(eq(roles.name, role.name));
 
       if (!roleExist) {
-        await db.insert(roles).values(role);
+        await tx.insert(roles).values(role);
       }
     }
   } catch (error) {
-    throw CustomError.internalServer(`Error creating roles: ${error} 🚫`);
+    throw CustomError.internalServer(`Error creating roles. ${error} 🚫`);
   }
   console.log("Roles created successfuly ✅");
 }
 
-async function createSubscriptionPlans() {
+async function createSubscriptionPlans(tx: any) {
   try {
     for (const subscriptionPlan of subscriptionPlansSeed) {
-      const [subscriptionPlanExist] = await db
+      const [subscriptionPlanExist] = await tx
         .select()
         .from(subscriptionPlans)
         .where(eq(subscriptionPlans.name, subscriptionPlan.name));
 
       if (!subscriptionPlanExist) {
-        await db.insert(subscriptionPlans).values(subscriptionPlan);
+        await tx.insert(subscriptionPlans).values(subscriptionPlan);
       }
     }
   } catch (error) {
     throw CustomError.internalServer(
-      `Error creating subscription plans: ${error} 🚫`
+      `Error creating subscription plans. ${error} 🚫`
     );
   }
   console.log("Subscription plans created successfuly ✅");
 }
 
-async function createExercisesCategories() {
+async function createExercisesCategories(tx: any) {
   try {
     for (const exerciseCategory of exercisesCategoriesSeed) {
-      const [exerciseCategoryExist] = await db
+      const [exerciseCategoryExist] = await tx
         .select()
         .from(exercisesCategories)
         .where(eq(exercisesCategories.name, exerciseCategory.name));
 
       if (!exerciseCategoryExist) {
-        await db.insert(exercisesCategories).values(exerciseCategory);
+        await tx.insert(exercisesCategories).values(exerciseCategory);
       }
     }
   } catch (error) {
     throw CustomError.internalServer(
-      `Error creating exercises categories: ${error} 🚫`
+      `Error creating exercises categories. ${error} 🚫`
     );
   }
   console.log("Exercises categories created successfuly ✅");
 }
 
-async function createExercises() {
+async function createExercises(tx: any) {
   try {
     for (const exercise of exercisesSeed) {
-      const [exerciseExist] = await db
+      const [exerciseExist] = await tx
         .select()
         .from(exercises)
         .where(eq(exercises.name, exercise.name));
 
       if (!exerciseExist) {
-        const [exerciseCategory] = await db
+        const [exerciseCategory] = await tx
           .select()
           .from(exercisesCategories)
           .where(eq(exercisesCategories.name, exercise.category));
 
-        await db
+        await tx
           .insert(exercises)
           .values({ ...exercise, categoryId: exerciseCategory.id });
       }
     }
   } catch (error) {
-    throw CustomError.internalServer(`Error creating exercises: ${error} 🚫`);
+    throw CustomError.internalServer(`Error creating exercises. ${error} 🚫`);
   }
   console.log("Exercises created successfuly ✅");
 }
 
-async function createPlanCategories() {
+async function createPlanCategories(tx: any) {
   try {
     for (const planCategory of plansCategoriesSeed) {
-      const [planCategoryExist] = await db
+      const [planCategoryExist] = await tx
         .select()
         .from(plansCategories)
         .where(eq(plansCategories.name, planCategory.name));
 
       if (!planCategoryExist) {
-        await db.insert(plansCategories).values(planCategory);
+        await tx.insert(plansCategories).values(planCategory);
       }
     }
   } catch (error) {
     throw CustomError.internalServer(
-      `Error creating plans categories: ${error} 🚫`
+      `Error creating plans categories. ${error} 🚫`
     );
   }
   console.log("Plans categories created successfuly ✅");
 }
 
-async function createPlansTypes() {
+async function createPlansTypes(tx: any) {
   try {
     for (const planType of plansTypesSeed) {
-      const [planTypeExist] = await db
+      const [planTypeExist] = await tx
         .select()
         .from(plansTypes)
         .where(eq(plansTypes.name, planType.name));
 
       if (!planTypeExist) {
-        await db.insert(plansTypes).values(planType);
+        await tx.insert(plansTypes).values(planType);
       }
     }
   } catch (error) {
-    throw CustomError.internalServer(`Error creating plans types: ${error} 🚫`);
+    throw CustomError.internalServer(`Error creating plans types. ${error} 🚫`);
   }
   console.log("Plans types created successfuly ✅");
 }
 
-async function createDaysOfWeek() {
+async function createDaysOfWeek(tx: any) {
   try {
     for (const dayOfWeek of daysOfWeekSeed) {
-      const [dayOfWeekExist] = await db
+      const [dayOfWeekExist] = await tx
         .select()
         .from(daysOfWeek)
         .where(eq(daysOfWeek.name, dayOfWeek.name));
 
       if (!dayOfWeekExist) {
-        await db.insert(daysOfWeek).values(dayOfWeek);
+        await tx.insert(daysOfWeek).values(dayOfWeek);
       }
     }
   } catch (error) {
     throw CustomError.internalServer(
-      `Error creating days of week: ${error} 🚫`
+      `Error creating days of week. ${error} 🚫`
     );
   }
   console.log("Days of week created successfuly ✅");
 }
 
 (async () => {
-  await createRoles();
-  await createSubscriptionPlans();
-  await createExercisesCategories();
-  await createExercises();
-  await createPlanCategories();
-  await createDaysOfWeek();
-  await createPlansTypes();
+  await db.transaction(async (tx) => {
+    await createRoles(tx);
+    await createSubscriptionPlans(tx);
+    await createExercisesCategories(tx);
+    await createExercises(tx);
+    await createPlanCategories(tx);
+    await createDaysOfWeek(tx);
+    await createPlansTypes(tx);
+  });
   process.exit();
 })();
