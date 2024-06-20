@@ -1,16 +1,20 @@
+import { SubscriptionPlanEntity } from "./subscription-plan.entity";
+import { ClientEntity } from "../client/client.entity";
+import { RoleEntity } from "./role.entity";
+
 export class UserEntity {
   constructor(
     public id: number,
     public name: string,
-    public role: any,
+    public role: RoleEntity,
     public email: string,
     public authId: string,
-    public subscriptionPlan?: any,
+    public subscriptionPlan: SubscriptionPlanEntity,
     public image?: string,
-    public clientInfo?: any
+    public clientInfo?: ClientEntity | null
   ) {}
 
-  public static fromObject(object: { [key: string]: any }): UserEntity {
+  public static create(object: { [key: string]: any }): UserEntity {
     const {
       id,
       name,
@@ -22,11 +26,11 @@ export class UserEntity {
       clientInfo,
     } = object;
 
-    if (!id) throw "id in UserEntity is required";
-    if (!name) throw "name in UserEntity is required";
-    if (!role) throw "roleId in UserEntity is required";
-    if (!email) throw "email in UserEntity is required";
-    if (!authId) throw "authId in UserEntity is required";
+    if (!id) throw "id is required";
+    if (!name) throw "name is required";
+    if (!role) throw "roleId is required";
+    if (!email) throw "email is required";
+    if (!authId) throw "authId is required";
 
     return new UserEntity(
       id,
