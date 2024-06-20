@@ -1,17 +1,20 @@
 import {
+  roles,
+  users,
   clients,
   invites,
-  roles,
   subscriptionPlans,
-  users,
 } from "../../db/schemas";
 import { SUBSCRIPTION_PLANS_CONSTANTS } from "../../../domain/constants/user/subscription-plans.constants";
+import { SubscriptionPlanEntity } from "../../../domain/entities/user/subscription-plan.entity";
 import { CreateGoogleUserDto } from "../../../domain/dtos/user/create-google-user.dto";
 import { ROLES_CONSTANTS } from "../../../domain/constants/user/role.constants";
 import { UserRepository } from "../../../domain/repositories/user/user.repository";
 import { CreateUserDto } from "../../../domain/dtos/user/create-user.dto";
+import { ClientEntity } from "../../../domain/entities/client/client.entity";
 import { uuidAdapter } from "../../../config/adapters/uuid.adapter";
 import { CustomError } from "../../../domain/errors/custom.error";
+import { RoleEntity } from "../../../domain/entities/user/role.entity";
 import { UserEntity } from "../../../domain/entities/user/user.entity";
 import { eq } from "drizzle-orm";
 import { db } from "../../db";
@@ -21,9 +24,9 @@ export class UserRepositoryImpl implements UserRepository {
     try {
       const [userFound] = await db
         .select({
-          main: users,
           role: roles,
           clientInfo: clients,
+          mainInformation: users,
           subscriptionPlan: subscriptionPlans,
         })
         .from(users)
@@ -35,23 +38,30 @@ export class UserRepositoryImpl implements UserRepository {
           eq(subscriptionPlans.id, users.subscriptionPlanId)
         );
 
-      return UserEntity.fromObject({
-        ...userFound.main,
-        role: userFound.role,
-        clientInfo: userFound.clientInfo,
-        subscriptionPlan: userFound.subscriptionPlan,
+      return UserEntity.create({
+        ...userFound.mainInformation,
+        role: userFound.role ? RoleEntity.create(userFound.role) : null,
+        subscriptionPlan: userFound.subscriptionPlan
+          ? SubscriptionPlanEntity.create(userFound.subscriptionPlan)
+          : null,
+        clientInfo: userFound.clientInfo
+          ? ClientEntity.fromObject(userFound.clientInfo)
+          : null,
       });
-    } catch (error) {
-      throw CustomError.internalServer(String(error));
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
     }
   }
   async readUserByAuthId(authId: string): Promise<any> {
     try {
       const [userFound] = await db
         .select({
-          main: users,
           role: roles,
           clientInfo: clients,
+          mainInformation: users,
           subscriptionPlan: subscriptionPlans,
         })
         .from(users)
@@ -67,14 +77,21 @@ export class UserRepositoryImpl implements UserRepository {
         return null;
       }
 
-      return UserEntity.fromObject({
-        ...userFound.main,
-        role: userFound.role,
-        clientInfo: userFound.clientInfo,
-        subscriptionPlan: userFound.subscriptionPlan,
+      return UserEntity.create({
+        ...userFound.mainInformation,
+        role: userFound.role ? RoleEntity.create(userFound.role) : null,
+        subscriptionPlan: userFound.subscriptionPlan
+          ? SubscriptionPlanEntity.create(userFound.subscriptionPlan)
+          : null,
+        clientInfo: userFound.clientInfo
+          ? ClientEntity.fromObject(userFound.clientInfo)
+          : null,
       });
-    } catch (error) {
-      throw CustomError.internalServer(String(error));
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
     }
   }
   async postUser(
@@ -83,7 +100,7 @@ export class UserRepositoryImpl implements UserRepository {
     try {
       return await db.transaction(async (tx) => {
         let role;
-        const hasInvite = registerUserDto.invite ? true : false;
+        const hasInvite: boolean = registerUserDto.invite ? true : false;
 
         if (hasInvite) {
           const [clientRole] = await tx
@@ -103,7 +120,7 @@ export class UserRepositoryImpl implements UserRepository {
 
         const userUuid = uuidAdapter.generate();
         const [subscriptionPlanFound] = await tx
-          .select({ id: subscriptionPlans.id })
+          .select()
           .from(subscriptionPlans)
           .where(
             eq(
@@ -142,10 +159,19 @@ export class UserRepositoryImpl implements UserRepository {
           });
         }
 
-        return UserEntity.fromObject({ ...newUser, role: role });
+        return UserEntity.create({
+          ...newUser,
+          role: RoleEntity.create(role),
+          subscriptionPlan: SubscriptionPlanEntity.create(
+            subscriptionPlanFound
+          ),
+        });
       });
-    } catch (error) {
-      throw CustomError.internalServer(String(error));
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
     }
   }
   async postUserWithGoogleAuth(
@@ -165,8 +191,11 @@ export class UserRepositoryImpl implements UserRepository {
       }
 
       return userExist;
-    } catch (error) {
-      throw CustomError.internalServer(String(error));
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
     }
   }
 }

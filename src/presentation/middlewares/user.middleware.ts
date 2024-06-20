@@ -28,7 +28,7 @@ export class UserMiddleware {
       if (!user)
         return res.status(401).json({ error: "User not authenticated" });
 
-      req.body.user = UserEntity.fromObject({
+      req.body.user = UserEntity.create({
         ...user.main,
         role: user.role,
       });

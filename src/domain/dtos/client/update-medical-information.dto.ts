@@ -22,16 +22,8 @@ export class UpdateClientMedicalInformationDto {
       medicalConditions,
     } = props;
 
-    if (!clientId)
-      return [
-        "clientId in UpdateClientMedicalInformationDto is required",
-        undefined,
-      ];
-    if (!trainerId)
-      return [
-        "trainerId in UpdateClientMedicalInformationDto is required",
-        undefined,
-      ];
+    if (!clientId) return ["clientId is required", undefined];
+    if (!trainerId) return ["trainerId is required", undefined];
 
     return [
       undefined,
