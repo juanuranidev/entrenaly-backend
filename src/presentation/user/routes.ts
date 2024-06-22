@@ -10,10 +10,10 @@ export class UserRoutes {
     const userRepositoryImpl = new UserRepositoryImpl();
     const userController = new UserController(userRepositoryImpl);
 
-    router.post("/v1/post", userController.postUser);
-    router.post("/v1/post/google", userController.postUserWithGoogleAuth);
-    router.get("/v1/get/authId", userController.readUserByAuthId);
-    router.get("/v1/get", [UserMiddleware.getUser], userController.readUser);
+    router.post("/v1/create", userController.createUser);
+    router.post("/v1/create/google", userController.createUserWithGoogleAuth);
+    router.get("/v1/read/authId", userController.readUserByAuthId);
+    router.get("/v1/read", [UserMiddleware.getUser], userController.readUser);
 
     return router;
   }

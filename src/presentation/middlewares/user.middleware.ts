@@ -1,8 +1,16 @@
+import {
+  roles,
+  users,
+  clients,
+  subscriptionPlans,
+} from "../../infraestructure/db/schemas";
+import { NextFunction, Request, Response } from "express";
+import { SubscriptionPlanEntity } from "../../domain/entities/user/subscription-plan.entity";
+import { ClientEntity } from "../../domain/entities/client/client.entity";
+import { UserEntity } from "../../domain/entities/user/user.entity";
+import { RoleEntity } from "../../domain/entities/user/role.entity";
 import { eq } from "drizzle-orm";
 import { db } from "../../infraestructure/db";
-import { UserEntity } from "../../domain/entities/user/user.entity";
-import { roles, users } from "../../infraestructure/db/schemas";
-import { NextFunction, Request, Response } from "express";
 
 export class UserMiddleware {
   static async getUser(req: Request, res: Response, next: NextFunction) {
@@ -16,25 +24,39 @@ export class UserMiddleware {
 
       const userId = authorization.split(" ").at(1) || "";
 
-      const [user] = await db
+      const [userFound] = await db
         .select({
-          main: users,
           role: roles,
+          clientInfo: clients,
+          mainInformation: users,
+          subscriptionPlan: subscriptionPlans,
         })
         .from(users)
         .where(eq(users.authId, userId))
-        .leftJoin(roles, eq(roles.id, users.roleId));
+        .leftJoin(clients, eq(clients.userId, users.id))
+        .leftJoin(roles, eq(roles.id, users.roleId))
+        .leftJoin(
+          subscriptionPlans,
+          eq(subscriptionPlans.id, users.subscriptionPlanId)
+        );
 
-      if (!user)
+      if (!userFound)
         return res.status(401).json({ error: "User not authenticated" });
 
       req.body.user = UserEntity.create({
-        ...user.main,
-        role: user.role,
+        ...userFound.mainInformation,
+        role: userFound.role ? RoleEntity.create(userFound.role) : null,
+        subscriptionPlan: userFound.subscriptionPlan
+          ? SubscriptionPlanEntity.create(userFound.subscriptionPlan)
+          : null,
+        clientInfo: userFound.clientInfo
+          ? ClientEntity.create(userFound.clientInfo)
+          : null,
       });
 
       next();
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: "Internal server error" });
     }
   }

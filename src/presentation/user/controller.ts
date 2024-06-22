@@ -1,4 +1,4 @@
-import { CreateGoogleUserDto } from "../../domain/dtos/user/create-google-user.dto";
+import { CreateUserWithGoogleDto } from "../../domain/dtos/user/create-user-with-google.dto";
 import { Request, Response } from "express";
 import { UserRepository } from "../../domain/repositories/user/user.repository";
 import { CreateUserDto } from "../../domain/dtos/user/create-user.dto";
@@ -13,6 +13,42 @@ export class UserController {
     }
     return res.status(500).json({ error: "Internal server error" });
   };
+  public createUser = async (req: Request, res: Response) => {
+    try {
+      const { data } = req.body;
+
+      const [error, registerUserDto] = CreateUserDto.create(data);
+      if (error) {
+        return res.status(400).json({ error });
+      }
+
+      const userRegistered = await this.userRepository.createUser(
+        registerUserDto!
+      );
+
+      return res.status(201).json(userRegistered);
+    } catch (error) {
+      this.handleError(error, res);
+    }
+  };
+  public createUserWithGoogleAuth = async (req: Request, res: Response) => {
+    try {
+      const { data } = req.body;
+
+      const [error, googleUserDto] = CreateUserWithGoogleDto.create(data);
+      if (error) {
+        return res.status(400).json({ error });
+      }
+
+      const user = await this.userRepository.createUserWithGoogleAuth(
+        googleUserDto!
+      );
+
+      return res.status(201).json(user);
+    } catch (error) {
+      this.handleError(error, res);
+    }
+  };
   public readUser = async (req: Request, res: Response) => {
     try {
       const { id: trainerId } = req.body.user;
@@ -20,7 +56,7 @@ export class UserController {
         return this.handleError("trainerId not given", res);
       }
 
-      const user = await this.userRepository.readUser(String(trainerId));
+      const user = await this.userRepository.readUser(trainerId);
 
       return res.status(200).json(user);
     } catch (error) {
@@ -37,42 +73,6 @@ export class UserController {
       const user = await this.userRepository.readUserByAuthId(String(authId));
 
       return res.status(200).json(user);
-    } catch (error) {
-      this.handleError(error, res);
-    }
-  };
-  public postUser = async (req: Request, res: Response) => {
-    try {
-      const { data } = req.body;
-
-      const [error, registerUserDto] = CreateUserDto.create(data);
-      if (error) {
-        return res.status(400).json({ error });
-      }
-
-      const userRegistered = await this.userRepository.postUser(
-        registerUserDto!
-      );
-
-      return res.status(201).json(userRegistered);
-    } catch (error) {
-      this.handleError(error, res);
-    }
-  };
-  public postUserWithGoogleAuth = async (req: Request, res: Response) => {
-    try {
-      const { data } = req.body;
-
-      const [error, googleUserDto] = CreateGoogleUserDto.create(data);
-      if (error) {
-        return res.status(400).json({ error });
-      }
-
-      const user = await this.userRepository.postUserWithGoogleAuth(
-        googleUserDto!
-      );
-
-      return res.status(201).json(user);
     } catch (error) {
       this.handleError(error, res);
     }
