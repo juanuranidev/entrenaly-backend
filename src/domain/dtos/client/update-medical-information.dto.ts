@@ -9,7 +9,7 @@ export class UpdateClientMedicalInformationDto {
     public readonly medicalConditions?: string
   ) {}
 
-  static create(props: {
+  static create(data: {
     [key: string]: any;
   }): [string?, UpdateClientMedicalInformationDto?] {
     const {
@@ -20,7 +20,7 @@ export class UpdateClientMedicalInformationDto {
       clientId,
       trainerId,
       medicalConditions,
-    } = props;
+    } = data;
 
     if (!clientId) return ["clientId is required", undefined];
     if (!trainerId) return ["trainerId is required", undefined];

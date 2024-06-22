@@ -4,18 +4,13 @@ export class CreateExerciseDescriptionDto {
     public readonly description: string
   ) {}
 
-  static create(props: {
+  static create(data: {
     [key: string]: any;
   }): [string?, CreateExerciseDescriptionDto?] {
-    const { description, userId } = props;
+    const { description, userId } = data;
 
-    if (!userId)
-      return ["userId in CreateExerciseDescriptionDto is required", undefined];
-    if (!description)
-      return [
-        "description in CreateExerciseDescriptionDto is required",
-        undefined,
-      ];
+    if (!userId) return ["userId is required", undefined];
+    if (!description) return ["description is required", undefined];
 
     return [undefined, new CreateExerciseDescriptionDto(userId, description)];
   }

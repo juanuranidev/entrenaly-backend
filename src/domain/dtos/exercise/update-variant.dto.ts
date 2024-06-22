@@ -9,9 +9,9 @@ export class UpdateVariantDto {
     public image?: string
   ) {}
 
-  static create(object: { [key: string]: any }): [string?, UpdateVariantDto?] {
+  static create(data: { [key: string]: any }): [string?, UpdateVariantDto?] {
     const { name, categoryId, video, userId, exerciseId, variantId, image } =
-      object;
+      data;
 
     if (!name) return ["name is required", undefined];
     if (!categoryId) return ["categoryId is required", undefined];

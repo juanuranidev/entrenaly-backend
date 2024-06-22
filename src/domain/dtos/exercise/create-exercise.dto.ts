@@ -7,13 +7,12 @@ export class CreateExerciseDto {
     public readonly image?: string
   ) {}
 
-  static create(props: { [key: string]: any }): [string?, CreateExerciseDto?] {
-    const { name, categoryId, video, userId, image } = props;
+  static create(data: { [key: string]: any }): [string?, CreateExerciseDto?] {
+    const { name, categoryId, video, userId, image } = data;
 
-    if (!name) return ["name in CreateExerciseDto is required", undefined];
-    if (!userId) return ["userId in CreateExerciseDto is required", undefined];
-    if (!categoryId)
-      return ["categoryId in CreateExerciseDto is required", undefined];
+    if (!name) return ["name is required", undefined];
+    if (!userId) return ["userId is required", undefined];
+    if (!categoryId) return ["categoryId is required", undefined];
 
     return [
       undefined,

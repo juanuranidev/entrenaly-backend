@@ -8,8 +8,8 @@ export class CreateVariantDto {
     public image?: string
   ) {}
 
-  static create(object: { [key: string]: any }): [string?, CreateVariantDto?] {
-    const { name, categoryId, video, userId, exerciseId, image } = object;
+  static create(data: { [key: string]: any }): [string?, CreateVariantDto?] {
+    const { name, categoryId, video, userId, exerciseId, image } = data;
 
     if (!name) return ["name is required", undefined];
     if (!userId) return ["userId is required", undefined];
