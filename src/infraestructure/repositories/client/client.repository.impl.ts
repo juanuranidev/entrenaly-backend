@@ -7,22 +7,16 @@ import { InviteEntity } from "../../../domain/entities/client/invite.entity";
 import { ClientRepository } from "../../../domain/repositories/client/client.repository";
 import { clients, invites, users } from "../../db/schemas";
 import { UpdateClientMedicalInformationDto } from "../../../domain/dtos/client/update-medical-information.dto";
-
+console.log("asssdafsssadscddsas");
 export class ClientRepositoryImpl implements ClientRepository {
   async readClient(clientId: string): Promise<ClientEntity | CustomError> {
     try {
       const [clientFound] = await db
         .select({
-          id: clients.id,
           name: users.name,
           image: users.image,
           email: users.email,
-          goals: clients.goals,
-          weight: clients.weight,
-          height: clients.height,
-          injuries: clients.injuries,
-          createdAt: clients.createdAt,
-          medicalConditions: clients.medicalConditions,
+          mainInformation: clients,
         })
         .from(clients)
         .where(and(eq(clients.id, clientId)))
@@ -32,17 +26,11 @@ export class ClientRepositoryImpl implements ClientRepository {
         throw CustomError.notFound("Client not found");
       }
 
-      return ClientEntity.fromObject({
-        id: clientFound?.id,
+      return ClientEntity.create({
+        ...clientFound.mainInformation,
         name: clientFound?.name,
-        goals: clientFound?.goals,
         image: clientFound?.image,
         email: clientFound?.email,
-        weight: clientFound?.weight,
-        height: clientFound?.height,
-        injuries: clientFound?.injuries,
-        createdAt: clientFound?.createdAt,
-        medicalConditions: clientFound?.medicalConditions,
       });
     } catch (error: unknown) {
       if (error instanceof CustomError) {
@@ -55,22 +43,23 @@ export class ClientRepositoryImpl implements ClientRepository {
     try {
       const clientsList = await db
         .select({
-          id: clients.id,
           name: users.name,
           image: users.image,
           email: users.email,
-          goals: clients.goals,
-          weight: clients.weight,
-          height: clients.height,
-          injuries: clients.injuries,
-          createdAt: clients.createdAt,
-          medicalConditions: clients.medicalConditions,
+          mainInformation: clients,
         })
         .from(clients)
         .where(and(eq(clients.trainerId, userId), eq(clients.isActive, true)))
         .leftJoin(users, eq(users.id, clients.userId));
 
-      return clientsList.map((client) => ClientEntity.fromObject(client));
+      return clientsList.map((client) =>
+        ClientEntity.create({
+          ...client?.mainInformation,
+          name: client?.name,
+          image: client?.image,
+          email: client?.email,
+        })
+      );
     } catch (error: unknown) {
       if (error instanceof CustomError) {
         throw error;
@@ -86,7 +75,7 @@ export class ClientRepositoryImpl implements ClientRepository {
         .where(eq(invites.userId, userId));
 
       if (inviteExist) {
-        return InviteEntity.fromObject(inviteExist);
+        return InviteEntity.create(inviteExist);
       }
 
       const uuid = uuidAdapter.generate();
@@ -102,7 +91,7 @@ export class ClientRepositoryImpl implements ClientRepository {
         throw CustomError.internalServer("Error creating the invite");
       }
 
-      return InviteEntity.fromObject(inviteCreated);
+      return InviteEntity.create(inviteCreated);
     } catch (error: unknown) {
       if (error instanceof CustomError) {
         throw error;
@@ -124,9 +113,14 @@ export class ClientRepositoryImpl implements ClientRepository {
         .where(eq(invites.id, invite))
         .leftJoin(users, eq(users.id, invites.userId));
 
-      return InviteEntity.fromObject({
+      if (!inviteFound) {
+        return CustomError.notFound("Invite not found");
+      }
+
+      return InviteEntity.create({
         ...inviteFound,
-        trainer: inviteFound.trainerImage,
+        trainerName: users.name,
+        trainerImage: users.image,
       });
     } catch (error: unknown) {
       if (error instanceof CustomError) {

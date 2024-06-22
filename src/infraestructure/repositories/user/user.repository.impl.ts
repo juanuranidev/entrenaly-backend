@@ -5,10 +5,9 @@ import {
   invites,
   subscriptionPlans,
 } from "../../db/schemas";
-import { SUBSCRIPTION_PLANS_CONSTANTS } from "../../../domain/constants/user/subscription-plans.constants";
+import { CreateUserWithGoogleDto } from "../../../domain/dtos/user/create-user-with-google.dto";
 import { SubscriptionPlanEntity } from "../../../domain/entities/user/subscription-plan.entity";
-import { CreateGoogleUserDto } from "../../../domain/dtos/user/create-google-user.dto";
-import { ROLES_CONSTANTS } from "../../../domain/constants/user/role.constants";
+import { USER_CONSTANTS } from "../../../domain/constants/user/user.constants";
 import { UserRepository } from "../../../domain/repositories/user/user.repository";
 import { CreateUserDto } from "../../../domain/dtos/user/create-user.dto";
 import { ClientEntity } from "../../../domain/entities/client/client.entity";
@@ -20,81 +19,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../../db";
 
 export class UserRepositoryImpl implements UserRepository {
-  async readUser(id: string): Promise<UserEntity | CustomError> {
-    try {
-      const [userFound] = await db
-        .select({
-          role: roles,
-          clientInfo: clients,
-          mainInformation: users,
-          subscriptionPlan: subscriptionPlans,
-        })
-        .from(users)
-        .where(eq(users.id, id))
-        .leftJoin(clients, eq(clients.userId, users.id))
-        .leftJoin(roles, eq(roles.id, users.roleId))
-        .leftJoin(
-          subscriptionPlans,
-          eq(subscriptionPlans.id, users.subscriptionPlanId)
-        );
-
-      return UserEntity.create({
-        ...userFound.mainInformation,
-        role: userFound.role ? RoleEntity.create(userFound.role) : null,
-        subscriptionPlan: userFound.subscriptionPlan
-          ? SubscriptionPlanEntity.create(userFound.subscriptionPlan)
-          : null,
-        clientInfo: userFound.clientInfo
-          ? ClientEntity.fromObject(userFound.clientInfo)
-          : null,
-      });
-    } catch (error: unknown) {
-      if (error instanceof CustomError) {
-        throw error;
-      }
-      throw CustomError.internalServer();
-    }
-  }
-  async readUserByAuthId(authId: string): Promise<any> {
-    try {
-      const [userFound] = await db
-        .select({
-          role: roles,
-          clientInfo: clients,
-          mainInformation: users,
-          subscriptionPlan: subscriptionPlans,
-        })
-        .from(users)
-        .where(eq(users.authId, authId))
-        .leftJoin(clients, eq(clients.userId, users.id))
-        .leftJoin(roles, eq(roles.id, users.roleId))
-        .leftJoin(
-          subscriptionPlans,
-          eq(subscriptionPlans.id, users.subscriptionPlanId)
-        );
-
-      if (!userFound) {
-        return null;
-      }
-
-      return UserEntity.create({
-        ...userFound.mainInformation,
-        role: userFound.role ? RoleEntity.create(userFound.role) : null,
-        subscriptionPlan: userFound.subscriptionPlan
-          ? SubscriptionPlanEntity.create(userFound.subscriptionPlan)
-          : null,
-        clientInfo: userFound.clientInfo
-          ? ClientEntity.fromObject(userFound.clientInfo)
-          : null,
-      });
-    } catch (error: unknown) {
-      if (error instanceof CustomError) {
-        throw error;
-      }
-      throw CustomError.internalServer();
-    }
-  }
-  async postUser(
+  async createUser(
     registerUserDto: CreateUserDto
   ): Promise<UserEntity | CustomError> {
     try {
@@ -106,14 +31,14 @@ export class UserRepositoryImpl implements UserRepository {
           const [clientRole] = await tx
             .select()
             .from(roles)
-            .where(eq(roles.name, ROLES_CONSTANTS.NAMES.CLIENT));
+            .where(eq(roles.name, USER_CONSTANTS.ROLES.NAMES.CLIENT));
 
           role = clientRole;
         } else {
           const [adminRole] = await tx
             .select()
             .from(roles)
-            .where(eq(roles.name, ROLES_CONSTANTS.NAMES.TRAINER));
+            .where(eq(roles.name, USER_CONSTANTS.ROLES.NAMES.TRAINER));
 
           role = adminRole;
         }
@@ -125,7 +50,7 @@ export class UserRepositoryImpl implements UserRepository {
           .where(
             eq(
               subscriptionPlans.name,
-              SUBSCRIPTION_PLANS_CONSTANTS.NAMES.INITIAL
+              USER_CONSTANTS.SUBSCRIPTION_PLANS.NAMES.INITIAL
             )
           );
 
@@ -168,14 +93,15 @@ export class UserRepositoryImpl implements UserRepository {
         });
       });
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
       throw CustomError.internalServer();
     }
   }
-  async postUserWithGoogleAuth(
-    googleUserDto: CreateGoogleUserDto
+  async createUserWithGoogleAuth(
+    googleUserDto: CreateUserWithGoogleDto
   ): Promise<UserEntity | CustomError> {
     try {
       const userExist = await this.readUserByAuthId(googleUserDto.authId);
@@ -185,13 +111,95 @@ export class UserRepositoryImpl implements UserRepository {
         if (error) {
           throw CustomError.internalServer(error);
         }
-        const userRegistered = await this.postUser(registerUserDto!);
+        const userRegistered = await this.createUser(registerUserDto!);
 
         return userRegistered;
       }
 
       return userExist;
     } catch (error: unknown) {
+      console.log(error);
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+  async readUser(id: string): Promise<UserEntity | CustomError> {
+    try {
+      const [userFound] = await db
+        .select({
+          role: roles,
+          clientInfo: clients,
+          mainInformation: users,
+          subscriptionPlan: subscriptionPlans,
+        })
+        .from(users)
+        .where(eq(users.id, id))
+        .leftJoin(clients, eq(clients.userId, users.id))
+        .leftJoin(roles, eq(roles.id, users.roleId))
+        .leftJoin(
+          subscriptionPlans,
+          eq(subscriptionPlans.id, users.subscriptionPlanId)
+        );
+
+      return UserEntity.create({
+        ...userFound.mainInformation,
+        role: RoleEntity.create(userFound.role!),
+        subscriptionPlan: SubscriptionPlanEntity.create(
+          userFound.subscriptionPlan!
+        ),
+        clientInfo: userFound.clientInfo
+          ? ClientEntity.create(userFound.clientInfo)
+          : null,
+      });
+    } catch (error: unknown) {
+      console.log(error);
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+  async readUserByAuthId(authId: string): Promise<any> {
+    try {
+      const [userFound] = await db
+        .select({
+          role: roles,
+          clientInfo: clients,
+          mainInformation: users,
+          subscriptionPlan: subscriptionPlans,
+        })
+        .from(users)
+        .where(eq(users.authId, authId))
+        .leftJoin(clients, eq(clients.userId, users.id))
+        .leftJoin(roles, eq(roles.id, users.roleId))
+        .leftJoin(
+          subscriptionPlans,
+          eq(subscriptionPlans.id, users.subscriptionPlanId)
+        );
+
+      if (!userFound) {
+        return null;
+      }
+
+      return UserEntity.create({
+        ...userFound.mainInformation,
+        role: RoleEntity.create(userFound.role!),
+        subscriptionPlan: SubscriptionPlanEntity.create(
+          userFound.subscriptionPlan!
+        ),
+        clientInfo: userFound.clientInfo
+          ? ClientEntity.create({
+              ...userFound.clientInfo,
+              name: userFound?.mainInformation?.name,
+              image: userFound?.mainInformation?.image,
+              email: userFound?.mainInformation?.email,
+            })
+          : null,
+      });
+    } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }

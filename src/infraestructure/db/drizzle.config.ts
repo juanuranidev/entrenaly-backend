@@ -6,9 +6,9 @@ export default {
   out: "src/infraestructure/db/migrations",
   driver: "pg",
   dbCredentials: {
-    host: ENVS.POSTGRESQL_HOST,
-    user: ENVS.POSTGRESQL_USER,
-    password: ENVS.POSTGRESQL_PASSWORD,
-    database: ENVS.POSTGRESQL_DB,
+    host: ENVS.POSTGRES_PORT,
+    user: ENVS.POSTGRES_USER,
+    password: ENVS.POSTGRES_PASSWORD,
+    database: ENVS.POSTGRES_DB,
   },
 };

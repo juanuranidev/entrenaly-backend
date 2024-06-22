@@ -5,9 +5,9 @@ import {
   exercisesDescriptions,
 } from "../../db/schemas";
 import { CreateExerciseDescriptionDto } from "../../../domain/dtos/exercise/create-exercise-description.dto";
+import { and, eq, ilike, isNull, or } from "drizzle-orm";
 import { ExerciseDescriptionEntity } from "../../../domain/entities/exercise/exercise-description.entity";
 import { ExerciseCategoryEntity } from "../../../domain/entities/exercise/exercise-category.entity";
-import { and, eq, ilike, isNull, or } from "drizzle-orm";
 import { ExerciseRepository } from "../../../domain/repositories/exercise/exercise.repository";
 import { CreateExerciseDto } from "../../../domain/dtos/exercise/create-exercise.dto";
 import { CreateVariantDto } from "../../../domain/dtos/exercise/create-variant.dto";
@@ -31,14 +31,25 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
           video: exercises.video,
           category: exercises.categoryId,
           image: exercises.image,
+          user: exercises.userId,
         });
 
       if (!newExercise) {
         throw CustomError.internalServer("Error creating the exercise");
       }
 
-      return ExerciseEntity.fromObject(newExercise);
+      const [exerciseCategory] = await db
+        .select()
+        .from(exercisesCategories)
+        .where(eq(exercisesCategories.id, newExercise.category));
+
+      return ExerciseEntity.create({
+        ...newExercise,
+        category: ExerciseCategoryEntity.create(exerciseCategory),
+        hasUser: Boolean(newExercise.user),
+      });
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
@@ -60,15 +71,20 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
           image: variants.image,
         });
 
-      if (!newVariant) {
-        throw CustomError.internalServer("Error creating the variant");
-      }
+      const [variantCategory] = await db
+        .select()
+        .from(exercisesCategories)
+        .where(eq(exercisesCategories.id, newVariant.category));
 
-      return VariantEntity.fromObject(newVariant);
+      return VariantEntity.create({
+        ...newVariant,
+        category: ExerciseCategoryEntity.create(variantCategory),
+      });
     } catch (error: unknown) {
       if (error instanceof CustomError) {
         throw error;
       }
+
       throw CustomError.internalServer();
     }
   }
@@ -85,11 +101,12 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
         });
 
       if (!newExerciseDescription) {
-        throw CustomError.internalServer();
+        throw CustomError.internalServer("Error creating the description");
       }
 
-      return ExerciseDescriptionEntity.fromObject(newExerciseDescription);
+      return ExerciseDescriptionEntity.create(newExerciseDescription);
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
@@ -106,7 +123,7 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
           main: exercises,
           variant: variants,
           category: exercisesCategories,
-          userId: exercises.userId,
+          user: exercises.userId,
         })
         .from(exercises)
         .leftJoin(
@@ -131,14 +148,20 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
         );
 
       return exercisesList.map((exercise) =>
-        ExerciseEntity.fromObject({
+        ExerciseEntity.create({
           ...exercise.main,
-          variant: exercise.variant,
-          category: exercise.category,
-          hasUser: Boolean(exercise.userId),
+          variant: exercise.variant
+            ? VariantEntity.create({
+                ...exercise.variant,
+                category: ExerciseCategoryEntity.create(exercise.category!),
+              })
+            : null,
+          category: ExerciseCategoryEntity.create(exercise.category!),
+          hasUser: Boolean(exercise.user),
         })
       );
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
@@ -150,13 +173,17 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
   > {
     try {
       const exercisesCategoriesList = await db
-        .select()
+        .select({
+          id: exercisesCategories.id,
+          name: exercisesCategories.name,
+        })
         .from(exercisesCategories);
 
       return exercisesCategoriesList.map((exerciseCategory) =>
-        ExerciseCategoryEntity.fromObject(exerciseCategory)
+        ExerciseCategoryEntity.create(exerciseCategory)
       );
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
@@ -176,9 +203,10 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
         .where(eq(exercisesDescriptions.userId, userId));
 
       return exercisesDescriptionsList.map((exerciseDescription) =>
-        ExerciseDescriptionEntity.fromObject(exerciseDescription)
+        ExerciseDescriptionEntity.create(exerciseDescription)
       );
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
@@ -211,11 +239,20 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
         });
 
       if (!updatedVariant) {
-        throw CustomError.internalServer();
+        throw CustomError.internalServer("Error creating the variant");
       }
 
-      return VariantEntity.fromObject(updatedVariant);
+      const [variantCategory] = await db
+        .select()
+        .from(exercisesCategories)
+        .where(eq(exercisesCategories.id, updatedVariant.category));
+
+      return VariantEntity.create({
+        ...updatedVariant,
+        category: ExerciseCategoryEntity.create(variantCategory),
+      });
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
