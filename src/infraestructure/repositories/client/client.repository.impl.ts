@@ -7,7 +7,6 @@ import { InviteEntity } from "../../../domain/entities/client/invite.entity";
 import { ClientRepository } from "../../../domain/repositories/client/client.repository";
 import { clients, invites, users } from "../../db/schemas";
 import { UpdateClientMedicalInformationDto } from "../../../domain/dtos/client/update-medical-information.dto";
-console.log("asssdafsssadscddsas");
 export class ClientRepositoryImpl implements ClientRepository {
   async readClient(clientId: string): Promise<ClientEntity | CustomError> {
     try {
