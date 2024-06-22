@@ -2,34 +2,37 @@ version: '3.8'
 
 services:
   server:
+    image: server-entrenaly
+    ports: 
+      - 8081:8081
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - db
     build:
       context: .
       dockerfile: Dockerfile
       args:
+        - PORT=${PORT}
         - BUILD_COMMAND=${BUILD_COMMAND}
-    image: server-entrenaly
-    ports: 
-      - 8081:8081
-    depends_on:
-      - db
-    volumes:
-      - .:/usr/src/app:delegated
     environment:
       PORT: ${PORT}
       NODE_ENV: ${NODE_ENV}
-      POSTGRESQL_USER: ${POSTGRESQL_USER}
-      POSTGRESQL_DB: ${POSTGRESQL_DB}
-      POSTGRESQL_HOST: ${POSTGRESQL_HOST}
-      POSTGRESQL_PASSWORD: ${POSTGRESQL_PASSWORD}
-      POSTGRESQL_URL: ${POSTGRESQL_URL}
+      BUILD_COMMAND: ${BUILD_COMMAND}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_URL: ${POSTGRES_URL}
   db:
     image: postgres:15.3
-    restart: always
-    environment:
-      POSTGRESQL_USER: ${POSTGRESQL_USER}
-      POSTGRESQL_DB: ${POSTGRESQL_DB}
-      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - ./postgres:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_URL: ${POSTGRES_URL}

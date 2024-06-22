@@ -1,0 +1,7 @@
+{
+  "restartable": "rs",
+  "verbose": false,
+  "watch": ["src"],
+  "ext": "ts",
+  "ignore": [".git", "node_modules/**/node_modules"]
+}
