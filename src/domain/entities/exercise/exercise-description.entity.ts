@@ -1,14 +1,13 @@
 export class ExerciseDescriptionEntity {
   constructor(public id: number, public description: number) {}
 
-  public static fromObject(object: {
+  public static create(data: {
     [key: string]: any;
   }): ExerciseDescriptionEntity {
-    const { id, description } = object;
+    const { id, description } = data;
 
-    if (!id) throw "id in ExerciseDescriptionEntity is required";
-    if (!description)
-      throw "description in ExerciseDescriptionEntity is required";
+    if (!id) throw "id is required";
+    if (!description) throw "description is required";
 
     return new ExerciseDescriptionEntity(id, description);
   }

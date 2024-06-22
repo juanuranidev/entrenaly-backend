@@ -14,7 +14,7 @@ export class UserEntity {
     public clientInfo?: ClientEntity | null
   ) {}
 
-  public static create(object: { [key: string]: any }): UserEntity {
+  public static create(data: { [key: string]: any }): UserEntity {
     const {
       id,
       name,
@@ -24,13 +24,19 @@ export class UserEntity {
       subscriptionPlan,
       image,
       clientInfo,
-    } = object;
+    } = data;
 
     if (!id) throw "id is required";
     if (!name) throw "name is required";
-    if (!role) throw "roleId is required";
+    if (!role) throw "role is required";
+    if (!(role instanceof RoleEntity)) throw "bad format of role";
     if (!email) throw "email is required";
     if (!authId) throw "authId is required";
+    if (!subscriptionPlan) throw "subscriptionPlan is required";
+    if (!(subscriptionPlan instanceof SubscriptionPlanEntity))
+      throw "bad format of subscriptionPlan";
+    if (clientInfo && !(clientInfo instanceof ClientEntity))
+      throw "bad format of clientInfo";
 
     return new UserEntity(
       id,

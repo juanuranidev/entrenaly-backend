@@ -10,21 +10,15 @@ export class UpdateWeeklyPlanDto {
     ]
   ) {}
 
-  static create(props: {
-    [key: string]: any;
-  }): [string?, UpdateWeeklyPlanDto?] {
-    const { planId, name, categoryId, trainerId, clientsIds, days } = props;
+  static create(data: { [key: string]: any }): [string?, UpdateWeeklyPlanDto?] {
+    const { planId, name, categoryId, trainerId, clientsIds, days } = data;
 
-    if (!planId)
-      return ["planId in UpdateWeeklyPlanDto is required", undefined];
-    if (!days) return ["days in UpdateWeeklyPlanDto is required", undefined];
-    if (!name) return ["name in UpdateWeeklyPlanDto is required", undefined];
-    if (!categoryId)
-      return ["categoryId in UpdateWeeklyPlanDto is required", undefined];
-    if (!trainerId)
-      return ["trainerId in UpdateWeeklyPlanDto is required", undefined];
-    if (!clientsIds)
-      return ["clientsIds in UpdateWeeklyPlanDto is required", undefined];
+    if (!planId) return ["planId is required", undefined];
+    if (!days) return ["days is required", undefined];
+    if (!name) return ["name is required", undefined];
+    if (!categoryId) return ["categoryId is required", undefined];
+    if (!trainerId) return ["trainerId is required", undefined];
+    if (!clientsIds) return ["clientsIds is required", undefined];
 
     return [
       undefined,

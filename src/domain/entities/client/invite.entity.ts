@@ -5,8 +5,8 @@ export class InviteEntity {
     public trainerImage?: string
   ) {}
 
-  public static fromObject(object: { [key: string]: any }): InviteEntity {
-    const { id, trainerName, trainerImage } = object;
+  public static create(data: { [key: string]: any }): InviteEntity {
+    const { id, trainerName, trainerImage } = data;
 
     if (!id) throw "id in InviteEntity is required";
 

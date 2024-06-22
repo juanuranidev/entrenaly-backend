@@ -78,13 +78,19 @@ export class PlanRepositoryImpl implements PlanRepository {
             .returning();
         }
 
-        return PlanEntity.fromObject({
+        const [planCategoryFound] = await tx
+          .select()
+          .from(plansCategories)
+          .where(eq(plansCategories.id, planCreated.categoryId));
+
+        return PlanEntity.create({
           ...planCreated,
-          type: planCreated?.typeId,
-          category: planCreated?.categoryId,
+          type: PlanTypeEntity.create(planTypeFound),
+          category: PlanCategoryEntity.create(planCategoryFound),
         });
       });
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
@@ -95,10 +101,9 @@ export class PlanRepositoryImpl implements PlanRepository {
     try {
       const plansTypesList = await db.select().from(plansTypes);
 
-      return plansTypesList.map((planType) =>
-        PlanTypeEntity.fromObject(planType)
-      );
+      return plansTypesList.map((planType) => PlanTypeEntity.create(planType));
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
@@ -110,9 +115,10 @@ export class PlanRepositoryImpl implements PlanRepository {
       const daysOfWeekList = await db.select().from(daysOfWeek);
 
       return daysOfWeekList.map((dayOfWeek: any) =>
-        DayOfWeekEntity.fromObject(dayOfWeek)
+        DayOfWeekEntity.create(dayOfWeek)
       );
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
@@ -124,9 +130,10 @@ export class PlanRepositoryImpl implements PlanRepository {
       const planCategoriesList = await db.select().from(plansCategories);
 
       return planCategoriesList.map((planCategory) =>
-        PlanCategoryEntity.fromObject(planCategory)
+        PlanCategoryEntity.create(planCategory)
       );
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
@@ -148,13 +155,14 @@ export class PlanRepositoryImpl implements PlanRepository {
         .leftJoin(plansCategories, eq(plansCategories.id, plans.categoryId));
 
       return plansList.map((plan: any) =>
-        PlanEntity.fromObject({
+        PlanEntity.create({
           ...plan.plan,
-          category: plan.category,
-          type: plan.type,
+          category: PlanCategoryEntity.create(plan.category),
+          type: PlanTypeEntity.create(plan.type),
         })
       );
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
@@ -183,13 +191,14 @@ export class PlanRepositoryImpl implements PlanRepository {
         .leftJoin(plansCategories, eq(plansCategories.id, plans.categoryId));
 
       return plansList.map((plan: any) =>
-        PlanEntity.fromObject({
+        PlanEntity.create({
           ...plan.mainInfo,
-          category: plan.category,
-          type: plan.type,
+          category: PlanCategoryEntity.create(plan.category),
+          type: PlanTypeEntity.create(plan.type),
         })
       );
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
@@ -215,7 +224,12 @@ export class PlanRepositoryImpl implements PlanRepository {
       const clientsPlansList = await db
         .select({ id: clientsPlans.clientId })
         .from(clientsPlans)
-        .where(eq(clientsPlans.planId, planFound.id));
+        .where(
+          and(
+            eq(clientsPlans.planId, planFound.id),
+            eq(clientsPlans.isActive, true)
+          )
+        );
 
       const planDaysList = await db
         .select({
@@ -291,12 +305,15 @@ export class PlanRepositoryImpl implements PlanRepository {
 
       const formattedExercisesByDay = Object.values(exercisesByDay);
 
-      return PlanEntity.fromObject({
+      return PlanEntity.create({
         ...planFound,
+        category: PlanCategoryEntity.create(planFound.category!),
+        type: PlanTypeEntity.create(planFound.type!),
         days: formattedExercisesByDay,
         clients: clientsPlansList.map((client: any) => client.id),
       });
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
@@ -383,29 +400,30 @@ export class PlanRepositoryImpl implements PlanRepository {
         }
 
         for (const client of updateWeeklyPlanDto.clientsIds) {
-          await tx
-            .insert(clientsPlans)
-            .values({
-              planId: planUpdated.id,
-              clientId: client,
-            })
-            .returning();
-        }
-
-        for (const client of updateWeeklyPlanDto.clientsIds) {
           await tx.insert(clientsPlans).values({
             planId: planUpdated.id,
             clientId: client,
           });
         }
 
-        return PlanEntity.fromObject({
+        const [planTypeFound] = await tx
+          .select()
+          .from(plansTypes)
+          .where(eq(plansTypes.id, planUpdated.typeId));
+
+        const [planCategoryFound] = await tx
+          .select()
+          .from(plansCategories)
+          .where(eq(plansCategories.id, planUpdated.categoryId));
+
+        return PlanEntity.create({
           ...planUpdated,
-          type: planUpdated?.typeId,
-          category: planUpdated?.categoryId,
+          category: PlanCategoryEntity.create(planCategoryFound),
+          type: PlanTypeEntity.create(planTypeFound),
         });
       });
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }
@@ -458,9 +476,24 @@ export class PlanRepositoryImpl implements PlanRepository {
             );
         }
 
-        return PlanEntity.fromObject(planUpdated);
+        const [planTypeFound] = await tx
+          .select()
+          .from(plansTypes)
+          .where(eq(plansTypes.id, planUpdated.typeId));
+
+        const [planCategoryFound] = await tx
+          .select()
+          .from(plansCategories)
+          .where(eq(plansCategories.id, planUpdated.categoryId));
+
+        return PlanEntity.create({
+          ...planUpdated,
+          category: PlanCategoryEntity.create(planCategoryFound),
+          type: PlanTypeEntity.create(planTypeFound),
+        });
       });
     } catch (error: unknown) {
+      console.log(error);
       if (error instanceof CustomError) {
         throw error;
       }

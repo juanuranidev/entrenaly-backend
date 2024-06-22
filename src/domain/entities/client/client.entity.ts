@@ -12,7 +12,7 @@ export class ClientEntity {
     public medicalConditions?: string
   ) {}
 
-  public static fromObject(object: { [key: string]: any }): ClientEntity {
+  public static create(data: { [key: string]: any }): ClientEntity {
     const {
       id,
       name,
@@ -24,12 +24,12 @@ export class ClientEntity {
       injuries,
       createdAt,
       medicalConditions,
-    } = object;
+    } = data;
 
-    if (!id) throw "id in ClientEntity is required";
-    if (!name) throw "name in ClientEntity is required";
-    if (!email) throw "email in ClientEntity is required";
-    if (!createdAt) throw "createdAt in ClientEntity is required";
+    if (!id) throw "id is required";
+    if (!name) throw "name is required";
+    if (!email) throw "email is required";
+    if (!createdAt) throw "createdAt is required";
 
     return new ClientEntity(
       id,
