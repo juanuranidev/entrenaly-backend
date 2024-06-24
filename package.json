@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon --legacy-watch ./src/app.ts",
     "build": "rimraf ./dist && tsc",
-    "start": "npm run db:migrations:push npm run build && node dist/app.js",
+    "start": "npm run build && node dist/app.js",
     "db:migrations:generate": "drizzle-kit generate:pg",
     "db:migrations:push": "ts-node src/infraestructure/db/migrate.ts",
     "db:seed": "ts-node ./src/infraestructure/db/seed"
