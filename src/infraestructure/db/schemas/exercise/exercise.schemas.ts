@@ -60,7 +60,7 @@ export const exercisesCategoriesRelations = relations(
 
 export const exercisesDescriptions = pgTable("exercises_descriptions", {
   id: serial("id").primaryKey().notNull(),
-  description: varchar("name", { length: 256 }).notNull(),
+  description: varchar("description", { length: 256 }).notNull(),
   userId: varchar("user_id")
     .notNull()
     .references(() => users.id),

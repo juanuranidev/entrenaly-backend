@@ -3,7 +3,7 @@ import { ExerciseCategoryEntity } from "./exercise-category.entity";
 export class VariantEntity {
   constructor(
     public id: number,
-    public name: number,
+    public name: string,
     public category: ExerciseCategoryEntity,
     public video?: string,
     public image?: string

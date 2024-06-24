@@ -1,7 +1,6 @@
 import {
   plans,
-  users,
-  clients,
+  variants,
   exercises,
   plansDays,
   daysOfWeek,
@@ -9,7 +8,7 @@ import {
   clientsPlans,
   plansExercises,
   plansCategories,
-  variants,
+  exercisesCategories,
 } from "../../db/schemas";
 import { CreateWeeklyPlanDto } from "../../../domain/dtos/plan/create-weekly-plan.dto";
 import { UpdateWeeklyPlanDto } from "../../../domain/dtos/plan/update-weekly-plan.dto";
@@ -18,11 +17,15 @@ import { PLANS_CONSTANTS } from "../../../domain/constants/plan/plan.constants";
 import { DayOfWeekEntity } from "../../../domain/entities/plan/day-of-week.entity";
 import { PlanRepository } from "../../../domain/repositories/plan/plan.repository";
 import { PlanTypeEntity } from "../../../domain/entities/plan/plan-type.entity";
+import { ExerciseEntity } from "../../../domain/entities/exercise/exercise.entity";
+import { PlanDayEntity } from "../../../domain/entities/plan/plan-day.entity";
 import { and, desc, eq } from "drizzle-orm";
 import { CustomError } from "../../../domain/errors/custom.error";
 import { uuidAdapter } from "../../../config/adapters/uuid.adapter";
 import { PlanEntity } from "../../../domain/entities/plan/plan.entity";
 import { db } from "../../db";
+import { ExerciseCategoryEntity } from "../../../domain/entities/exercise/exercise-category.entity";
+import { VariantEntity } from "../../../domain/entities/exercise/variant.entity";
 
 export class PlanRepositoryImpl implements PlanRepository {
   async createWeeklyPlan(
@@ -52,7 +55,7 @@ export class PlanRepositoryImpl implements PlanRepository {
             .insert(plansDays)
             .values({
               planId: planCreated?.id,
-              dayOfWeekId: day.dayOfWeekId,
+              dayOfWeekId: day.dayOfWeek?.id,
             })
             .returning();
 
@@ -68,7 +71,7 @@ export class PlanRepositoryImpl implements PlanRepository {
           }
         }
 
-        for (const client of createWeeklyPlanDto.clientsIds) {
+        for (const client of createWeeklyPlanDto.clients) {
           await tx
             .insert(clientsPlans)
             .values({
@@ -190,6 +193,8 @@ export class PlanRepositoryImpl implements PlanRepository {
         .leftJoin(plansTypes, eq(plansTypes.id, plans.typeId))
         .leftJoin(plansCategories, eq(plansCategories.id, plans.categoryId));
 
+      console.log(plansList);
+
       return plansList.map((plan: any) =>
         PlanEntity.create({
           ...plan.mainInfo,
@@ -198,6 +203,7 @@ export class PlanRepositoryImpl implements PlanRepository {
         })
       );
     } catch (error: unknown) {
+      console.log("first");
       console.log(error);
       if (error instanceof CustomError) {
         throw error;
@@ -233,17 +239,12 @@ export class PlanRepositoryImpl implements PlanRepository {
 
       const planDaysList = await db
         .select({
-          exerciseId: exercises.id,
-          exerciseVariant: variants,
-          category: plansCategories,
-          plansDaysId: plansDays.id,
-          dayOfWeekId: daysOfWeek.id,
-          exerciseName: exercises.name,
-          exerciseImage: exercises.image,
-          exerciseVideo: exercises.video,
-          dayOfWeekName: daysOfWeek.name,
-          dayOfWeekOrder: daysOfWeek.order,
-          exerciseDescription: plansExercises.description,
+          id: plansDays.id,
+          dayOfWeek: daysOfWeek,
+          exercises: exercises,
+          variants: variants,
+          exercisesCategories: exercisesCategories,
+          description: plansExercises.description,
         })
         .from(plansDays)
         .where(
@@ -272,39 +273,56 @@ export class PlanRepositoryImpl implements PlanRepository {
             eq(variants.userId, planFound.userId)
           )
         )
+        .leftJoin(plansCategories, eq(plansCategories.id, exercises.categoryId))
         .leftJoin(
-          plansCategories,
-          eq(plansCategories.id, exercises.categoryId)
+          exercisesCategories,
+          eq(exercisesCategories.id, exercises.categoryId)
         );
 
       const exercisesByDay: any = {};
-      planDaysList.forEach((exercise: any) => {
-        const { dayOfWeekId, dayOfWeekName, dayOfWeekOrder, plansDaysId } =
-          exercise;
-
-        if (!exercisesByDay[dayOfWeekId]) {
-          exercisesByDay[dayOfWeekId] = {
-            dayOfWeekId,
-            dayOfWeekName,
-            dayOfWeekOrder,
-            plansDaysId,
+      planDaysList.forEach((planDay: any) => {
+        const {
+          variants,
+          dayOfWeek,
+          exercises,
+          description,
+          exercisesCategories,
+        } = planDay;
+        if (!exercisesByDay[dayOfWeek.id]) {
+          exercisesByDay[dayOfWeek.id] = {
+            dayOfWeek: DayOfWeekEntity.create(dayOfWeek),
             exercises: [],
           };
         }
 
-        exercisesByDay[dayOfWeekId].exercises.unshift({
-          exerciseId: exercise.exerciseId,
-          exerciseName: exercise.exerciseName,
-          exerciseVideo: exercise.exerciseVideo,
-          exerciseImage: exercise.exerciseImage,
-          exerciseVariant: exercise.exerciseVariant,
-          exerciseDescription: exercise.exerciseDescription,
-          hasVariant: Boolean(exercise.exerciseVariant),
+        exercisesByDay[dayOfWeek.id].exercises.push({
+          ...(exercises
+            ? ExerciseEntity.create({
+                ...exercises,
+                category: ExerciseCategoryEntity.create(exercisesCategories),
+                variant: variants
+                  ? VariantEntity.create({
+                      ...variants,
+                      category:
+                        ExerciseCategoryEntity.create(exercisesCategories),
+                    })
+                  : null,
+              })
+            : null),
+          description: description,
+          hasVariant: Boolean(variants),
         });
       });
 
-      const formattedExercisesByDay = Object.values(exercisesByDay);
-
+      const formattedExercisesByDay = Object.values(exercisesByDay).map(
+        (day: any) =>
+          PlanDayEntity.create({
+            id: day.dayOfWeek.id,
+            planId: planFound.id,
+            dayOfWeek: DayOfWeekEntity.create(day.dayOfWeek),
+            exercises: day.exercises,
+          })
+      );
       return PlanEntity.create({
         ...planFound,
         category: PlanCategoryEntity.create(planFound.category!),
@@ -355,7 +373,7 @@ export class PlanRepositoryImpl implements PlanRepository {
           const [dayOfWeekFound] = await tx
             .select()
             .from(daysOfWeek)
-            .where(eq(daysOfWeek.id, day.dayOfWeekId));
+            .where(eq(daysOfWeek.id, day.dayOfWeek?.id));
 
           const [planDayCreated] = await tx
             .insert(plansDays)
@@ -399,10 +417,10 @@ export class PlanRepositoryImpl implements PlanRepository {
             );
         }
 
-        for (const client of updateWeeklyPlanDto.clientsIds) {
+        for (const client of updateWeeklyPlanDto.clients) {
           await tx.insert(clientsPlans).values({
             planId: planUpdated.id,
-            clientId: client,
+            clientId: client.id,
           });
         }
 

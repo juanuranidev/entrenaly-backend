@@ -4,11 +4,11 @@ import { VariantEntity } from "./variant.entity";
 export class ExerciseEntity {
   constructor(
     public id: number,
-    public name: number,
+    public name: string,
     public category: ExerciseCategoryEntity,
     public hasUser: boolean,
-    public video?: number,
-    public image?: number,
+    public video?: string,
+    public image?: string,
     public variant?: VariantEntity | null
   ) {}
 

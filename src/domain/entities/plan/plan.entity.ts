@@ -1,4 +1,5 @@
 import { PlanCategoryEntity } from "./plan-category.entity";
+import { PlanDayEntity } from "./plan-day.entity";
 import { PlanTypeEntity } from "./plan-type.entity";
 
 export class PlanEntity {
@@ -10,20 +11,20 @@ export class PlanEntity {
     public createdAt: string,
     public clients: any,
     public user?: any,
-    public days?: any
+    public days?: PlanDayEntity[] | null
   ) {}
 
   public static create(data: { [key: string]: any }): PlanEntity {
     const { id, name, category, type, user, createdAt, days, clients } = data;
 
-    if (!id) throw "id in PlanEntity is required";
-    if (!name) throw "name in PlanEntity is required";
-    if (!type) throw "type in PlanEntity is required";
+    if (!id) throw "id is required";
+    if (!name) throw "name is required";
+    if (!type) throw "type is required";
     if (!(type instanceof PlanTypeEntity)) throw "bad format of type";
-    if (!category) throw "category in PlanEntity is required";
+    if (!category) throw "category is required";
     if (!(category instanceof PlanCategoryEntity))
       throw "bad format of category";
-    if (!createdAt) throw "createdAt in PlanEntity is required";
+    if (!createdAt) throw "createdAt is required";
 
     return new PlanEntity(
       id,

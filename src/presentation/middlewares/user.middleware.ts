@@ -42,7 +42,7 @@ export class UserMiddleware {
 
       if (!userFound)
         return res.status(401).json({ error: "User not authenticated" });
-
+      console.log(userFound);
       req.body.user = UserEntity.create({
         ...userFound.mainInformation,
         role: userFound.role ? RoleEntity.create(userFound.role) : null,
@@ -50,12 +50,18 @@ export class UserMiddleware {
           ? SubscriptionPlanEntity.create(userFound.subscriptionPlan)
           : null,
         clientInfo: userFound.clientInfo
-          ? ClientEntity.create(userFound.clientInfo)
+          ? ClientEntity.create({
+              ...userFound.clientInfo,
+              id: userFound?.mainInformation?.id,
+              name: userFound?.mainInformation?.name,
+              email: userFound?.mainInformation?.email,
+            })
           : null,
       });
 
       next();
     } catch (error) {
+      console.log("AAAA");
       console.log(error);
       res.status(500).json({ error: "Internal server error" });
     }

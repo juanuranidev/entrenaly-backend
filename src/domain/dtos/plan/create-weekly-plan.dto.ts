@@ -3,9 +3,24 @@ export class CreateWeeklyPlanDto {
     public readonly name: string,
     public readonly trainerId: string,
     public readonly categoryId: number,
-    public readonly clientsIds: string[],
+    public readonly clients: any,
     public readonly days: [
-      { dayOfWeekId: number; exercises: [{ id: number; description: string }] }
+      {
+        id: number;
+        planId: string;
+        dayOfWeek: {
+          id: number;
+          name: string;
+        };
+        exercises: [
+          {
+            id: number;
+            name: string;
+            image: string;
+            description: string;
+          }
+        ];
+      }
     ]
   ) {}
 

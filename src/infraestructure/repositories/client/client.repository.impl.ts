@@ -104,7 +104,7 @@ export class ClientRepositoryImpl implements ClientRepository {
     try {
       const [inviteFound] = await db
         .select({
-          id: invites.id,
+          mainInformation: invites,
           trainerName: users.name,
           trainerImage: users.image,
         })
@@ -117,9 +117,9 @@ export class ClientRepositoryImpl implements ClientRepository {
       }
 
       return InviteEntity.create({
-        ...inviteFound,
-        trainerName: users.name,
-        trainerImage: users.image,
+        ...inviteFound.mainInformation,
+        trainerName: inviteFound?.trainerName,
+        trainerImage: inviteFound?.trainerImage,
       });
     } catch (error: unknown) {
       if (error instanceof CustomError) {
