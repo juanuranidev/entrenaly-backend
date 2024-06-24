@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS "exercises_categories" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "exercises_descriptions" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"name" varchar(256) NOT NULL,
+	"description" varchar(256) NOT NULL,
 	"user_id" varchar NOT NULL
 );
 --> statement-breakpoint
