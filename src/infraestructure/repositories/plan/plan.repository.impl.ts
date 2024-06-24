@@ -193,8 +193,6 @@ export class PlanRepositoryImpl implements PlanRepository {
         .leftJoin(plansTypes, eq(plansTypes.id, plans.typeId))
         .leftJoin(plansCategories, eq(plansCategories.id, plans.categoryId));
 
-      console.log(plansList);
-
       return plansList.map((plan: any) =>
         PlanEntity.create({
           ...plan.mainInfo,
@@ -203,7 +201,6 @@ export class PlanRepositoryImpl implements PlanRepository {
         })
       );
     } catch (error: unknown) {
-      console.log("first");
       console.log(error);
       if (error instanceof CustomError) {
         throw error;
