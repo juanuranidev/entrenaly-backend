@@ -76,7 +76,7 @@ export class PlanRepositoryImpl implements PlanRepository {
             .insert(clientsPlans)
             .values({
               planId: planCreated.id,
-              clientId: client,
+              clientId: client.id,
             })
             .returning();
         }
