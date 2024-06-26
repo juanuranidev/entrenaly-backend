@@ -25,17 +25,17 @@ export class CreateWeeklyPlanDto {
   ) {}
 
   static create(data: { [key: string]: any }): [string?, CreateWeeklyPlanDto?] {
-    const { name, categoryId, trainerId, clientsIds, days } = data;
+    const { name, categoryId, trainerId, clients, days } = data;
 
     if (!days) return ["days is required", undefined];
     if (!name) return ["name is required", undefined];
     if (!categoryId) return ["categoryId is required", undefined];
     if (!trainerId) return ["trainerId is required", undefined];
-    if (!clientsIds) return ["clientsIds is required", undefined];
+    if (!clients.length) return ["clients are required", undefined];
 
     return [
       undefined,
-      new CreateWeeklyPlanDto(name, trainerId, categoryId, clientsIds, days),
+      new CreateWeeklyPlanDto(name, trainerId, categoryId, clients, days),
     ];
   }
 }
