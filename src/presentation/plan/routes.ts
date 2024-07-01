@@ -12,7 +12,7 @@ export class PlanRoutes {
 
     router.post(
       "/v1/create/weekly-plan",
-      [UserMiddleware.getUser],
+      [UserMiddleware.validateToken],
       planController.createWeeklyPlan
     );
     router.get("/v1/read/plans-types", planController.readPlansTypes);
@@ -20,23 +20,23 @@ export class PlanRoutes {
     router.get("/v1/read/plan-categories", planController.readPlansCategories);
     router.get(
       "/v1/read/plans-by-user-id",
-      [UserMiddleware.getUser],
+      [UserMiddleware.validateToken],
       planController.readPlansByUserId
     );
     router.get(
       "/v1/read/plans-by-client-id",
-      [UserMiddleware.getUser],
+      [UserMiddleware.validateToken],
       planController.readPlansByClientId
     );
     router.get("/v1/read/weekly-plan", planController.readWeeklyPlan);
     router.post(
       "/v1/update/weekly-plan",
-      [UserMiddleware.getUser],
+      [UserMiddleware.validateToken],
       planController.updateWeeklyPlan
     );
     router.delete(
       "/v1/delete/weekly-plan",
-      [UserMiddleware.getUser],
+      [UserMiddleware.validateToken],
       planController.deleteWeeklyPlan
     );
 

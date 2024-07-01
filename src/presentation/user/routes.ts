@@ -13,7 +13,11 @@ export class UserRoutes {
     router.post("/v1/create", userController.createUser);
     router.post("/v1/create/google", userController.createUserWithGoogleAuth);
     router.get("/v1/read/authId", userController.readUserByAuthId);
-    router.get("/v1/read", [UserMiddleware.getUser], userController.readUser);
+    router.get(
+      "/v1/read",
+      [UserMiddleware.validateToken],
+      userController.readUser
+    );
 
     return router;
   }

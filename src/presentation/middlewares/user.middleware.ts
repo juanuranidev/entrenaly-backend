@@ -13,7 +13,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../../infraestructure/db";
 
 export class UserMiddleware {
-  static async getUser(req: Request, res: Response, next: NextFunction) {
+  static async validateToken(req: Request, res: Response, next: NextFunction) {
     try {
       const authorization = req.header("Authorization");
 

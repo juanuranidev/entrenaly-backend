@@ -12,17 +12,17 @@ export class ExerciseRoutes {
 
     router.get(
       "/v1/get",
-      [UserMiddleware.getUser],
+      [UserMiddleware.validateToken],
       exerciseController.readExercises
     );
     router.post(
       "/v1/create/variant",
-      [UserMiddleware.getUser],
+      [UserMiddleware.validateToken],
       exerciseController.createVariant
     );
     router.post(
       "/v1/update/variant",
-      [UserMiddleware.getUser],
+      [UserMiddleware.validateToken],
       exerciseController.updateVariant
     );
     router.get(
@@ -31,17 +31,17 @@ export class ExerciseRoutes {
     );
     router.get(
       "/v1/get/exercises-descriptions",
-      [UserMiddleware.getUser],
+      [UserMiddleware.validateToken],
       exerciseController.readExercisesDescriptions
     );
     router.post(
       "/v1/post/exercise-description",
-      [UserMiddleware.getUser],
+      [UserMiddleware.validateToken],
       exerciseController.createExerciseDescription
     );
     router.post(
       "/v1/create",
-      [UserMiddleware.getUser],
+      [UserMiddleware.validateToken],
       exerciseController.createExercise
     );
 

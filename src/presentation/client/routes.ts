@@ -13,12 +13,12 @@ export class ClientRoutes {
     router.get("/v1/read/client", exerciseController.readClient);
     router.get(
       "/v1/read/clients",
-      [UserMiddleware.getUser],
+      [UserMiddleware.validateToken],
       exerciseController.readClients
     );
     router.get(
       "/v1/read/invite",
-      [UserMiddleware.getUser],
+      [UserMiddleware.validateToken],
       exerciseController.readInvite
     );
     router.get(
@@ -27,7 +27,7 @@ export class ClientRoutes {
     );
     router.post(
       "/v1/update/client-medical-information",
-      [UserMiddleware.getUser],
+      [UserMiddleware.validateToken],
       exerciseController.updateClientMedicalInformation
     );
 
