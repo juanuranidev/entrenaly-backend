@@ -20,7 +20,8 @@ export abstract class ExerciseRepository {
   ): Promise<ExerciseDescriptionEntity | CustomError>;
   abstract readExercises(
     userId: string,
-    name?: any
+    name?: any,
+    exerciseCategoryId?: any
   ): Promise<ExerciseEntity[] | CustomError>;
   abstract readExercisesCategories(): Promise<
     ExerciseCategoryEntity[] | CustomError

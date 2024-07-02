@@ -89,9 +89,13 @@ export class ExerciseController {
   public readExercises = async (req: Request, res: Response) => {
     try {
       const { id } = req.body.user;
-      const { name } = req.query;
+      const { name, exerciseCategoryId } = req.query;
 
-      const exercises = await this.exerciseRepository.readExercises(id, name);
+      const exercises = await this.exerciseRepository.readExercises(
+        id,
+        name,
+        exerciseCategoryId
+      );
 
       return res.status(200).json(exercises);
     } catch (error) {

@@ -80,11 +80,12 @@ Antes de realizar la instalación, asegúrate de tener las siguientes herramient
    npm install
    ```
 4. Crea un archivo .env basado en el archivo .env.example y agrega tus variables de entorno:
-   `PORT=` (usualmente 8081)
 
-   `NODE_ENV=` (development)
+   `PORT=`8081
 
-   `BUILD_COMMAND=` (dev)
+   `NODE_ENV=`development
+
+   `BUILD_COMMAND=`dev
 
    `POSTGRES_USER=`
 

@@ -115,7 +115,8 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
   }
   async readExercises(
     userId: string,
-    name?: string
+    name?: string,
+    exerciseCategoryId?: any
   ): Promise<ExerciseEntity[] | CustomError> {
     try {
       const exercisesList = await db
@@ -143,7 +144,10 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
               name ? ilike(exercises.name, `%${name}%`) : undefined,
               name ? ilike(variants.name, `%${name}%`) : undefined
             ),
-            or(isNull(exercises.userId), eq(exercises.userId, userId))
+            or(isNull(exercises.userId), eq(exercises.userId, userId)),
+            exerciseCategoryId
+              ? eq(exercises.categoryId, exerciseCategoryId)
+              : undefined
           )
         );
 
