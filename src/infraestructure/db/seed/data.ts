@@ -312,6 +312,18 @@ export const exercisesSeed = [
     category: "Espalda",
   },
   {
+    name: "Dominada con agarre invertido",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1710992458/entrenaly/Dominada_con_agarre_invertido_obhlb1.webp",
+    category: "Espalda",
+  },
+  {
+    name: "Remo inclinado con barra",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720060820/entrenaly/remo_inclinado_con_barra_od6l14.gif",
+    category: "Espalda",
+  },
+  {
     name: "Press de pecho en máquina",
     image:
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1718150501/entrenaly/press_de_pecho_en_maquina_rz6bru.gif",
@@ -372,6 +384,12 @@ export const exercisesSeed = [
     category: "Pecho",
   },
   {
+    name: "Press de banca inclinado con barra",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720060616/entrenaly/press_de_banca_inclinado_con_barra_orz7hw.gif",
+    category: "Pecho",
+  },
+  {
     name: "Vuelos frontales sentado",
     image:
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1718160427/entrenaly/vuelos_frontales_sentado_m8lmu9.gif",
@@ -408,13 +426,13 @@ export const exercisesSeed = [
     category: "Hombros",
   },
   {
-    name: "Extensión de tríceps",
+    name: "Press militar en barra parado",
     image:
-      "https://res.cloudinary.com/dhodvztdx/image/upload/v1718161357/entrenaly/extension_de_triceps_a2j3xt.gif",
-    category: "Tríceps",
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720060501/entrenaly/press_militar_con_barra_a2lero.gif",
+    category: "Hombros",
   },
   {
-    name: "Patada de tríceps",
+    name: "Patada de tríceps en polea",
     image:
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1718161437/entrenaly/patada_de_triceps_eh3xm4.gif",
     category: "Tríceps",
@@ -432,6 +450,36 @@ export const exercisesSeed = [
     category: "Tríceps",
   },
   {
+    name: "Fondos en banco plano",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720061128/entrenaly/fondos_en_banco_plano_mtjqmt.gif",
+    category: "Tríceps",
+  },
+  {
+    name: "Extensión de tríceps con mancuerna tras nuca",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720061338/entrenaly/extension_de_triceps_con_mancuerna_tras_nuca_zurhlx.gif",
+    category: "Tríceps",
+  },
+  {
+    name: "Patada de tríceps con mancuerna",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720061424/entrenaly/patada_de_triceps_con_mancuerna_jvrvbj.gif",
+    category: "Tríceps",
+  },
+  {
+    name: "Flexiones diamante",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720061531/entrenaly/flexiones_diamante_lt7b81.gif",
+    category: "Tríceps",
+  },
+  {
+    name: "Extensión de tríceps en polea alta",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720061612/entrenaly/extension_de_triceps_con_polea_alta_shceb7.gif",
+    category: "Tríceps",
+  },
+  {
     name: "Curl con barra",
     image:
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1718161679/entrenaly/curl_de_biceps_con_barra_kj5ndo.gif",
@@ -444,9 +492,39 @@ export const exercisesSeed = [
     category: "Bíceps",
   },
   {
-    name: "Curl en banco scott",
+    name: "Curl en banco scott con mancuerna",
     image:
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1718161896/entrenaly/curl_de_biceps_en_banco_scott_jfeflm.gif",
+    category: "Bíceps",
+  },
+  {
+    name: "Curl concentrado con mancuerna",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720061797/entrenaly/curl_concentrado_con_mancuerna_mwigcw.gif",
+    category: "Bíceps",
+  },
+  {
+    name: "Curl martillo con mancuernas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720061875/entrenaly/curl_martillo_con_mancuerna_iafl3a.gif",
+    category: "Bíceps",
+  },
+  {
+    name: "Curl inclinado con mancuernas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720061941/entrenaly/curl_inclinado_con_mancuernas_rzkpw0.gif",
+    category: "Bíceps",
+  },
+  {
+    name: "Curl en polea baja",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720062007/entrenaly/curl_con_polea_baja_fntg02.gif",
+    category: "Bíceps",
+  },
+  {
+    name: "Curl en banco scott con barra z",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720062118/entrenaly/curl_en_banco_scott_con_barra_z_s2jl1t.gif",
     category: "Bíceps",
   },
   {
@@ -474,7 +552,7 @@ export const exercisesSeed = [
     category: "Piernas",
   },
   {
-    name: "Sentadillas búlgaras",
+    name: "Sentadillas búlgaras con mancuernas",
     image:
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1718246101/entrenaly/sentadillas_bulgaras_my40yu.gif",
     category: "Piernas",
@@ -485,7 +563,93 @@ export const exercisesSeed = [
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1718246211/entrenaly/sentadillas_con_mancuernas_abiertas_igkyyo.gif",
     category: "Piernas",
   },
+  {
+    name: "Estocadas con mancuernas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720060322/entrenaly/estocadas_con_mancuernas_xwxa6w.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Sentadillas con peso corporal",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720120761/entrenaly/sentadilla_peso_corporal_wq7fs9.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Peso muerto con mancuernas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720120865/entrenaly/peso_muerto_con_mancuernas_mvarsm.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Sentadillas búlgaras con barra",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720120955/entrenaly/sentadilla_bulgara_con_barra_w1g8nn.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Elevaciones de cadera con barra",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720121043/entrenaly/elevaciones_de_cadera_con_barra_im3fca.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Abductores en máquina",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720121173/entrenaly/abductores_en_maquina_sdkjav.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Aductores en máquina",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720121242/entrenaly/aductores_en_maquina_lkcysh.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Peso muerto con barra",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720121336/entrenaly/peso_muerto_con_barra_ggw0jt.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Estocadas con barra",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720121400/entrenaly/estocadas_con_barra_yyk5tz.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Etensión de cadera en polea baja",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720121634/entrenaly/extension_de_cadera_en_polea_baja_k2n2ct.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Patada lateral en polea baja",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720121721/entrenaly/patada_lateral_en_polea_baja_psxrmv.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Estocadas con peso corporal",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720121802/entrenaly/estocadas_con_peso_corporal_d5d6e1.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Sentadillas en banco con mancuernas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720121881/entrenaly/sentadilla_en_banco_con_mancuernas_ykcro1.gif",
+    category: "Piernas",
+  },
+  {
+    name: "Peso muerto con barra hexagonal",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720121951/entrenaly/peso_muerto_con_barra_hexagonal_upfhi5.gif",
+    category: "Piernas",
+  },
 ];
+
+// NOMBRE + MAQUINA + EQUIPO + VARIANTE
 
 // Plan
 export const plansCategoriesSeed = [
