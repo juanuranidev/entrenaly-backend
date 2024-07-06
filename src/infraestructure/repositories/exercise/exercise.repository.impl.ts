@@ -140,6 +140,7 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
         )
         .where(
           and(
+            eq(exercises.isActive, true),
             or(
               name ? ilike(exercises.name, `%${name}%`) : undefined,
               name ? ilike(variants.name, `%${name}%`) : undefined
