@@ -1,27 +1,33 @@
+type Exercise = {
+  id: number;
+  name: string;
+  image: string;
+  description: string;
+  superset: boolean;
+};
+
+type DayOfWeek = {
+  id: number;
+  name: string;
+};
+
+type Day = {
+  id: number;
+  dayOfWeek: DayOfWeek;
+  exercises: Exercise[];
+};
+
+type Client = {
+  name: string;
+  id: string;
+};
 export class CreateWeeklyPlanDto {
   private constructor(
     public readonly name: string,
     public readonly trainerId: string,
     public readonly categoryId: number,
-    public readonly clients: any,
-    public readonly days: [
-      {
-        id: number;
-        planId: string;
-        dayOfWeek: {
-          id: number;
-          name: string;
-        };
-        exercises: [
-          {
-            id: number;
-            name: string;
-            image: string;
-            description: string;
-          }
-        ];
-      }
-    ]
+    public readonly clients: Client[],
+    public readonly days: Day[]
   ) {}
 
   static create(data: { [key: string]: any }): [string?, CreateWeeklyPlanDto?] {
@@ -31,7 +37,6 @@ export class CreateWeeklyPlanDto {
     if (!name) return ["name is required", undefined];
     if (!categoryId) return ["categoryId is required", undefined];
     if (!trainerId) return ["trainerId is required", undefined];
-    if (!clients.length) return ["clients are required", undefined];
 
     return [
       undefined,

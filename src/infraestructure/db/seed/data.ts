@@ -16,6 +16,7 @@ export const subscriptionPlansSeed = [
     name: "Experto",
   },
 ];
+
 // Exercise
 export const exercisesCategoriesSeed = [
   { name: "Pecho" },
@@ -24,7 +25,6 @@ export const exercisesCategoriesSeed = [
   { name: "Tríceps" },
   { name: "Bíceps" },
   { name: "Abdomen" },
-  { name: "Trapecio" },
   { name: "Piernas" },
 ];
 
@@ -384,51 +384,147 @@ export const exercisesSeed = [
     category: "Pecho",
   },
   {
-    name: "Press de banca inclinado con barra",
+    name: "Press de banca con barra en banco inclinado",
     image:
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1720060616/entrenaly/press_de_banca_inclinado_con_barra_orz7hw.gif",
     category: "Pecho",
   },
   {
-    name: "Vuelos frontales sentado",
+    name: "Apertura con mancuernas en banco inclinado",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720149826/entrenaly/apertura_con_mancuernas_en_banco_inclinado_yroomv.gif",
+    category: "Pecho",
+  },
+  {
+    name: "Press de banca con mancuernas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720149900/entrenaly/press_de_banca_con_mancuernas_tuvi7t.gif",
+    category: "Pecho",
+  },
+  {
+    name: "Flexiones de brazos",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720149970/entrenaly/flexiones_de_brazos_aci4bg.gif",
+    category: "Pecho",
+  },
+  {
+    name: "Elevaciones frontales alternado sentado",
     image:
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1718160427/entrenaly/vuelos_frontales_sentado_m8lmu9.gif",
     category: "Hombros",
   },
   {
-    name: "Press tras nuca con máquina",
+    name: "Press tras nuca en máquina",
     image:
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1718160525/entrenaly/press_tras_nuca_con_maquina_zmpjs8.gif",
     category: "Hombros",
   },
   {
-    name: "Vuelos laterales de a un brazo",
+    name: "Elevaciones laterales de a un brazo",
     image:
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1718160578/entrenaly/vuelos_laterales_1_brazo_rjorhr.gif",
     category: "Hombros",
   },
   {
-    name: "Vuelos laterales de a un brazo en polea",
+    name: "Elevaciones laterales de a un brazo en polea",
     image:
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1718160663/entrenaly/vuelos_laterales_1_brazo_polea_udrf9r.gif",
     category: "Hombros",
   },
   {
-    name: "Vuelos posteriores sentado",
+    name: "Elevaciones posteriores sentado",
     image:
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1718160786/entrenaly/vuelos_posteriores_sentado_g7fyxk.gif",
     category: "Hombros",
   },
   {
-    name: "Press tras nuca",
+    name: "Press tras nuca con barra sentado",
     image:
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1718160847/entrenaly/press_tras_nuca_vqhgjv.gif",
     category: "Hombros",
   },
   {
-    name: "Press militar en barra parado",
+    name: "Press militar con barra parado",
     image:
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1720060501/entrenaly/press_militar_con_barra_a2lero.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Press unilateral con mancuernas arrodillado",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720150666/entrenaly/press_unilateral_con_mancuerna_arrodillado_mpcc5j.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Elevaciones frontales en polea baja",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720150758/entrenaly/elevaciones_frontales_con_polea_baja_sr6zza.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Press de hombros con mancuernas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720150853/entrenaly/press_de_hombros_con_mancuernas_pweour.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Press Arnold con mancuernas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720150921/entrenaly/press_arnold_con_mancuernas_hklr0f.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Elevaciones frontales con disco",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720151011/entrenaly/elevaciones_frontales_con_disco_ps689m.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Elevaciones frontales con mancuernas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720151112/entrenaly/elevaciones_frontales_con_mancuernas_cwxjhv.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Press de hombros con mancuernas parado",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720151240/entrenaly/press_de_hombros_con_mancuernas_parado_ahpymt.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Elevaciones laterales con mancuernas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720151325/entrenaly/elevaciones_laterales_con_mancuernas_ed79i1.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Elevaciones frontales con barra",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720151587/entrenaly/elevaciones_frontales_con_barra_skgodd.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Elevaciones frontales con mancuernas sentado",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720151647/entrenaly/elevaciones_frontales_con_mancuernas_sentado_qvxlkp.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Elevaciones frontales con barra en polea baja",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720151774/entrenaly/elevaciones_frontales_con_barra_en_polea_baja_stehhg.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Press de hombros alternado con mancuernas parado",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720151997/entrenaly/press_de_hombros_alternado_con_mancuernas_parado_ynypev.gif",
+    category: "Hombros",
+  },
+  {
+    name: "Elevación y rotación de hombros con mancuernas parado",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720152107/entrenaly/elevacion_y_rotacion_de_hombros_con_mancuernas_parado_qiimca.gif",
     category: "Hombros",
   },
   {
@@ -647,9 +743,85 @@ export const exercisesSeed = [
       "https://res.cloudinary.com/dhodvztdx/image/upload/v1720121951/entrenaly/peso_muerto_con_barra_hexagonal_upfhi5.gif",
     category: "Piernas",
   },
+  {
+    name: "Bicho muerto",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720231979/entrenaly/bicho_muerto_uus9ab.gif",
+    category: "Abdomen",
+  },
+  {
+    name: "Elevación de rodillas colgado",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720232062/entrenaly/elevacion_de_rodillas_colgado_g8mwtr.gif",
+    category: "Abdomen",
+  },
+  {
+    name: "Crunch",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720232867/entrenaly/crunch_my4ydy.gif",
+    category: "Abdomen",
+  },
+  {
+    name: "Crunch bicicleta",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720232486/entrenaly/crunsh_alternado_wartji.gif",
+    category: "Abdomen",
+  },
+  {
+    name: "Crunch invertido",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720232581/entrenaly/crunch_invertido_g0vsdu.gif",
+    category: "Abdomen",
+  },
+  {
+    name: "Crunch con piernas elevadas",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720232682/entrenaly/crunch_con_piernas_elevadas_ued49e.gif",
+    category: "Abdomen",
+  },
+  {
+    name: "Crunch con brazos extendidos",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720232979/entrenaly/crunch_con_brazos_extendidos_pmezlt.gif",
+    category: "Abdomen",
+  },
+  {
+    name: "Abdominales en v",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720233055/entrenaly/abdominales_en_v_lif4zn.gif",
+    category: "Abdomen",
+  },
+  {
+    name: "Puente lateral",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720233514/entrenaly/puente_lateral_wqyk1j.gif",
+    category: "Abdomen",
+  },
+  {
+    name: "Sit ups",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720233812/entrenaly/sit_ups_nmcysl.gif",
+    category: "Abdomen",
+  },
+  {
+    name: "Toque de talones",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720234038/entrenaly/toque_de_talones_cdqilz.gif",
+    category: "Abdomen",
+  },
+  {
+    name: "Elevación de piernas alternado",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720234120/entrenaly/elevacion_de_piernas_alternado_pvwsdo.gif",
+    category: "Abdomen",
+  },
+  {
+    name: "Mountain climber",
+    image:
+      "https://res.cloudinary.com/dhodvztdx/image/upload/v1720234272/entrenaly/mountain_climbers_qa3sbn.gif",
+    category: "Abdomen",
+  },
 ];
-
-// NOMBRE + MAQUINA + EQUIPO + VARIANTE
 
 // Plan
 export const plansCategoriesSeed = [

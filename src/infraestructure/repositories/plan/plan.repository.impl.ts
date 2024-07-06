@@ -10,6 +10,7 @@ import {
   plansCategories,
   exercisesCategories,
 } from "../../db/schemas";
+import { ExerciseCategoryEntity } from "../../../domain/entities/exercise/exercise-category.entity";
 import { CreateWeeklyPlanDto } from "../../../domain/dtos/plan/create-weekly-plan.dto";
 import { UpdateWeeklyPlanDto } from "../../../domain/dtos/plan/update-weekly-plan.dto";
 import { PlanCategoryEntity } from "../../../domain/entities/plan/plan-category.entity";
@@ -19,13 +20,12 @@ import { PlanRepository } from "../../../domain/repositories/plan/plan.repositor
 import { PlanTypeEntity } from "../../../domain/entities/plan/plan-type.entity";
 import { ExerciseEntity } from "../../../domain/entities/exercise/exercise.entity";
 import { PlanDayEntity } from "../../../domain/entities/plan/plan-day.entity";
+import { VariantEntity } from "../../../domain/entities/exercise/variant.entity";
 import { and, desc, eq } from "drizzle-orm";
 import { CustomError } from "../../../domain/errors/custom.error";
 import { uuidAdapter } from "../../../config/adapters/uuid.adapter";
 import { PlanEntity } from "../../../domain/entities/plan/plan.entity";
 import { db } from "../../db";
-import { ExerciseCategoryEntity } from "../../../domain/entities/exercise/exercise-category.entity";
-import { VariantEntity } from "../../../domain/entities/exercise/variant.entity";
 
 export class PlanRepositoryImpl implements PlanRepository {
   async createWeeklyPlan(
@@ -66,6 +66,7 @@ export class PlanRepositoryImpl implements PlanRepository {
                 planDayId: planDayCreated.id,
                 exerciseId: exercise.id,
                 description: exercise.description,
+                superset: exercise.superset,
               })
               .returning();
           }
@@ -242,6 +243,7 @@ export class PlanRepositoryImpl implements PlanRepository {
           variants: variants,
           exercisesCategories: exercisesCategories,
           description: plansExercises.description,
+          superset: plansExercises.superset,
         })
         .from(plansDays)
         .where(
@@ -280,6 +282,7 @@ export class PlanRepositoryImpl implements PlanRepository {
       planDaysList.forEach((planDay: any) => {
         const {
           variants,
+          superset,
           dayOfWeek,
           exercises,
           description,
@@ -308,6 +311,7 @@ export class PlanRepositoryImpl implements PlanRepository {
             : null),
           description: description,
           hasVariant: Boolean(variants),
+          superset: superset,
         });
       });
 
@@ -392,6 +396,7 @@ export class PlanRepositoryImpl implements PlanRepository {
                 planDayId: planDayCreated.id,
                 exerciseId: exerciseFound.id,
                 description: exercise.description,
+                superset: exercise.superset,
               })
               .returning();
           }

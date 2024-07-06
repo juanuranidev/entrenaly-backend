@@ -86,6 +86,7 @@ export const plansExercises = pgTable("plans_exercises", {
     .references(() => exercises.id),
   description: varchar("description", { length: 256 }).notNull(),
   isActive: boolean("is_active").notNull().default(true),
+  superset: boolean("superset").notNull().default(false),
 });
 
 export const daysOfWeek = pgTable("days_of_week", {
