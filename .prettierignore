@@ -1,0 +1,13 @@
+dist
+node_modules
+postgres
+.dockerignore
+.gitignore
+docker-compose.yml
+Dockerfile
+drizzle.config.ts
+nodemon.json
+package-lock.json
+package.json
+README.md
+tsconfig.json

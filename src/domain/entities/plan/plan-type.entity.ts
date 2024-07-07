@@ -1,5 +1,8 @@
 export class PlanTypeEntity {
-  constructor(public id: number, public name: string) {}
+  constructor(
+    public id: number,
+    public name: string
+  ) {}
 
   public static create(data: { [key: string]: any }): PlanTypeEntity {
     const { id, name } = data;

@@ -1,5 +1,8 @@
 export class ExerciseCategoryEntity {
-  constructor(public id: number, public name: number) {}
+  constructor(
+    public id: number,
+    public name: number
+  ) {}
 
   public static create(data: { [key: string]: any }): ExerciseCategoryEntity {
     const { id, name } = data;

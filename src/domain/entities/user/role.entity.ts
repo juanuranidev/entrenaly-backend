@@ -1,5 +1,8 @@
 export class RoleEntity {
-  constructor(public id: number, public name: string) {}
+  constructor(
+    public id: number,
+    public name: string
+  ) {}
 
   public static create(data: { [key: string]: any }): RoleEntity {
     const { id, name } = data;

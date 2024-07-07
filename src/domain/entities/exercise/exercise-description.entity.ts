@@ -1,5 +1,8 @@
 export class ExerciseDescriptionEntity {
-  constructor(public id: number, public description: number) {}
+  constructor(
+    public id: number,
+    public description: number
+  ) {}
 
   public static create(data: {
     [key: string]: any;

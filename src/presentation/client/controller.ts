@@ -51,9 +51,8 @@ export class ClientController {
     try {
       const { inviteId } = req.query;
 
-      const invite = await this.clientRepository.readInviteInformation(
-        inviteId
-      );
+      const invite =
+        await this.clientRepository.readInviteInformation(inviteId);
 
       return res.status(200).json(invite);
     } catch (error) {

@@ -20,7 +20,7 @@ export const exercises = pgTable("exercises", {
   isActive: boolean("is_active").notNull().default(true),
 });
 
-export const exercisesRelations = relations(exercises, ({ many, one }) => ({
+export const exercisesRelations = relations(exercises, ({ one }) => ({
   variant: one(variants, {
     fields: [exercises.id],
     references: [variants.exerciseId],
