@@ -15,7 +15,7 @@
   - [Software architecture](#software-architecture)
     - [Config](#config-en)
     - [Domain](#domain-en)
-    - [Infrastructure](#infrastructure-en)
+    - [Infrastructure](#infraestructure-en)
     - [Presentation](#presentation-en)
   - [Installation](#installation)
     - [Prerequisites](#prerequisites)
@@ -135,7 +135,7 @@ Como pueden observar dentro del mismo no solo concentramos tódos los parámetro
 **Entities** 
 Dentro de esta carpeta encontraremos todas las entidades de nuestro software, cada entidad tendrá el objetivo de marcar un modelo estandar al momento de que la información de las entidades salgan de nuestra aplicación, así podremos asegurarnos que en caso de cambiar cómo interactuamos con nuestra base de datos, siempre devolveremos la información con el mismo formato.
 
-Ejemplo de la entity de User
+Ejemplo de un User entity  
 ```
 import { SubscriptionPlanEntity } from "./subscription-plan.entity";
 import { ClientEntity } from "../client/client.entity";
@@ -296,7 +296,7 @@ Antes de realizar la instalación, asegúrate de tener las siguientes herramient
    `POSTGRES_PASSWORD=`  
    `POSTGRES_URL=`  
 
-> [!NOTA]  
+> [!NOTE]  
 > La variable de entorno BUILD_COMMAND sirve para definir si queremos levantar nuestra aplicación en modo desarrollo o producción. Para el modo desarrollo deberemos asignar el valor "dev" mientras que para el modo producción deberemos asignarle el valor de "start".
 
 5. Levantar docker:
@@ -369,7 +369,7 @@ For the backend architecture I implemented a clean architecture, separating the 
 - Presentation
 - Config
 
-### Config en
+### Config-en
 
 Inside this folder we will find essential configurations for our software, from adapters that facilitate the work with external libraries to important software variables. Next we will explain the different folders inside Config:
 
@@ -404,7 +404,7 @@ const ENVS = {
 };
 ```
 
-### Domain en
+### Domain-en
 
 Inside the domain folder is where we will be able to find all the rules of our software, from how we must receive the data at the moment that our frontend interacts, how the entities of our software must be, etc.
 
@@ -459,7 +459,7 @@ As you can see inside it we not only concentrate all the necessary parameters fo
 **Entities**  
 Inside this folder we will find all the entities of our software, each entity will have the objective of marking a standard model at the moment that the information of the entities leave our application, this way we will be able to make sure that in case of changing how we interact with our database, we will always return the information with the same format.
 
-Ejemplo de entidad de usuario  
+Example of user entity  
 ```
 import { SubscriptionPlanEntity } from "./suscripción-plan.entidad";
 import { ClientEntity } from "./cliente/cliente.entidad";
@@ -564,7 +564,7 @@ export abstract class UserRepository {
 
 As we can see, the relationship between the dtos, the entities and the errors that we defined previously is already beginning to be noticed.
 
-### Infraestructure en
+### Infraestructure-en
 
 Inside the Infraestructure folder we will be able to find all the logic of our database, either migrations, schemas, seed data, etc, as well as the repositories that we will use to interact with our database, which are based on the repositories previously defined in our Domain.
 
@@ -579,7 +579,7 @@ We can see that we have the function to connect to the database, the migrations,
 > [!TIP]
 > If in the future we want to add more databases to the software we can wrap the db and repositories folders inside a folder called postgresql for example, so at the moment of adding a mongodb database we will have to create its corresponding folder "mongodb" with the db and repositories folders inside it.
 
-### Presentation en
+### Presentation-en
 
 Inside the Presentation folder we will find the parts of our software that interact with the outside of our application, in this case the frontend. Here we will be able to find the logic to raise the main server, the base routes of our application, the routes of each entity and their respective controllers, in addition to necessary middlewares. 
 
@@ -599,15 +599,15 @@ Before performing the installation, make sure you have the following tools confi
 #### Installation steps
 
 1. Clone this repository:
-   ````bash
+   ```bash
    git clone https://github.com/juanuranidev/entrenaly-backend
    ```
 2. Navigate to the directory:
-   ````bash
+   ```bash
    cd entrenaly-backend
    ```
 3. Install the dependencies:
-   ````bash
+   ```bash
    npm install
    ```
 4. Create an .env file based on the .env.example file and add your environment variables:
@@ -624,11 +624,11 @@ Before performing the installation, make sure you have the following tools confi
 > The BUILD_COMMAND environment variable is used to define if we want to build our application in development or production mode. For the development mode we will have to assign the value "dev" while for the production mode we will have to assign the value of "start".
 
 5. To raise docker:
-   ````bash
+   ```bash
    docker compose up --build
    ```
 6. Load initial data:
-   ````bash
+   ```bash
    docker compose exec server npm run db:seed
    ```
 
