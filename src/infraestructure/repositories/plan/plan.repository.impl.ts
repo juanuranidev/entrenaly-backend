@@ -295,7 +295,7 @@ export class PlanRepositoryImpl implements PlanRepository {
           };
         }
 
-        exercisesByDay[dayOfWeek.id].exercises.push({
+        exercisesByDay[dayOfWeek.id].exercises.unshift({
           ...(exercises
             ? ExerciseEntity.create({
                 ...exercises,
