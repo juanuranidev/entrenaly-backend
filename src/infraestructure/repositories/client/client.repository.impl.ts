@@ -132,15 +132,8 @@ export class ClientRepositoryImpl implements ClientRepository {
     updateClientMedicalInformationDto: UpdateClientMedicalInformationDto
   ): Promise<ClientEntity | CustomError> {
     try {
-      const {
-        goals,
-        weight,
-        height,
-        injuries,
-        clientId,
-        trainerId,
-        medicalConditions,
-      } = updateClientMedicalInformationDto;
+      const { goals, weight, height, injuries, clientId, medicalConditions } =
+        updateClientMedicalInformationDto;
 
       const [updatedClient] = await db
         .update(clients)
@@ -151,7 +144,28 @@ export class ClientRepositoryImpl implements ClientRepository {
           injuries: injuries,
           medicalConditions: medicalConditions,
         })
-        .where(and(eq(clients.id, clientId), eq(clients.trainerId, trainerId)))
+        .where(and(eq(clients.id, clientId)))
+        .returning();
+
+      const client = await this.readClient(updatedClient.id);
+
+      return client;
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+  async updateClientOnboardingStatus(
+    clientId: string,
+    onboardingStatus: boolean
+  ): Promise<ClientEntity | CustomError> {
+    try {
+      const [updatedClient] = await db
+        .update(clients)
+        .set({ hasCompletedOnboarding: onboardingStatus })
+        .where(and(eq(clients.id, clientId)))
         .returning();
 
       const client = await this.readClient(updatedClient.id);

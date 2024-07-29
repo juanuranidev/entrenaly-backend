@@ -84,4 +84,29 @@ export class ClientController {
       this.handleError(error, res);
     }
   };
+  public updateClientOnboardingStatus = async (req: Request, res: Response) => {
+    try {
+      const { clientId, onboardingStatus } = req.query;
+
+      if (!clientId) {
+        return res.status(400).json({ error: "Invalid or missing clientId" });
+      }
+
+      if (!onboardingStatus) {
+        return res
+          .status(400)
+          .json({ error: "Invalid or missing onboardingStatus" });
+      }
+
+      const user = await this.clientRepository.updateClientOnboardingStatus(
+        String(clientId),
+        Boolean(onboardingStatus)
+      );
+
+      return res.status(200).json(user);
+    } catch (error) {
+      console.log(error);
+      this.handleError(error, res);
+    }
+  };
 }

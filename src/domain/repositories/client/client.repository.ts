@@ -13,4 +13,8 @@ export abstract class ClientRepository {
   abstract updateClientMedicalInformation(
     updateClientMedicalInformationDto: UpdateClientMedicalInformationDto
   ): Promise<ClientEntity | CustomError>;
+  abstract updateClientOnboardingStatus(
+    clientId: string,
+    onboardingStatus: boolean
+  ): Promise<ClientEntity | CustomError>;
 }

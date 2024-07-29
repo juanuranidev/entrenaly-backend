@@ -3,6 +3,7 @@ export class ClientEntity {
     public id: number,
     public name: string,
     public createdAt: string,
+    public hasCompletedOnboarding: boolean,
     public email?: string,
     public image?: string,
     public weight?: string,
@@ -24,17 +25,21 @@ export class ClientEntity {
       injuries,
       createdAt,
       medicalConditions,
+      hasCompletedOnboarding,
     } = data;
 
     if (!id) throw "id is required";
     if (!name) throw "name is required";
     if (!email) throw "email is required";
     if (!createdAt) throw "createdAt is required";
+    if (hasCompletedOnboarding === null)
+      throw "hasCompletedOnboarding is required";
 
     return new ClientEntity(
       id,
       name,
       createdAt,
+      hasCompletedOnboarding,
       email,
       image,
       weight,

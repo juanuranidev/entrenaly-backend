@@ -15,6 +15,13 @@
       "when": 1720238289593,
       "tag": "0001_orange_pandemic",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1722054796506,
+      "tag": "0002_lowly_scarlet_witch",
+      "breakpoints": true
     }
   ]
 }

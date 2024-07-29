@@ -1,7 +1,6 @@
 export class UpdateClientMedicalInformationDto {
   private constructor(
     public readonly clientId: string,
-    public readonly trainerId: string,
     public readonly goals?: string,
     public readonly height?: string,
     public readonly weight?: string,
@@ -12,24 +11,15 @@ export class UpdateClientMedicalInformationDto {
   static create(data: {
     [key: string]: any;
   }): [string?, UpdateClientMedicalInformationDto?] {
-    const {
-      goals,
-      height,
-      weight,
-      injuries,
-      clientId,
-      trainerId,
-      medicalConditions,
-    } = data;
+    const { goals, height, weight, injuries, clientId, medicalConditions } =
+      data;
 
     if (!clientId) return ["clientId is required", undefined];
-    if (!trainerId) return ["trainerId is required", undefined];
 
     return [
       undefined,
       new UpdateClientMedicalInformationDto(
         clientId,
-        trainerId,
         goals,
         height,
         weight,

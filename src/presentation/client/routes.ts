@@ -30,6 +30,11 @@ export class ClientRoutes {
       [UserMiddleware.validateToken],
       exerciseController.updateClientMedicalInformation
     );
+    router.post(
+      "/v1/update/client-onboarding-status",
+      [UserMiddleware.validateToken],
+      exerciseController.updateClientOnboardingStatus
+    );
 
     return router;
   }

@@ -1,0 +1,1 @@
+ALTER TABLE "clients" ADD COLUMN "has_completed_onboarding" boolean DEFAULT false NOT NULL;

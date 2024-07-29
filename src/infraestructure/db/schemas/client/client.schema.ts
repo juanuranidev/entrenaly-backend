@@ -15,6 +15,9 @@ export const clients = pgTable("clients", {
   goals: varchar("goals", { length: 256 }),
   injuries: varchar("injuries", { length: 256 }),
   medicalConditions: varchar("medicalConditions", { length: 256 }),
+  hasCompletedOnboarding: boolean("has_completed_onboarding")
+    .notNull()
+    .default(false),
 });
 
 export const clientsRelations = relations(clients, ({ one, many }) => ({
