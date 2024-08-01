@@ -43,3 +43,10 @@ export const subscriptionPlans = pgTable("subscription_plans", {
   id: serial("id").primaryKey().notNull(),
   name: varchar("name", { length: 256 }).notNull(),
 });
+
+export const appReleases = pgTable("app_releases", {
+  id: serial("id").primaryKey().notNull(),
+  date: timestamp("date").notNull(),
+  version: varchar("version", { length: 256 }).notNull(),
+  description: varchar("description", { length: 500 }).notNull(),
+});
