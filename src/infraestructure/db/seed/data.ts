@@ -17,6 +17,44 @@ export const subscriptionPlansSeed = [
   },
 ];
 
+export const appReleasesSeed = [
+  {
+    date: new Date("2024-07-01 00:00:00"),
+    version: "1.0.0",
+    description:
+      "Se agregó una nueva vista para poder agregar clientes, ver toda su información y editar su ficha médica. Se agregó una nueva vista para crear planes de tipo semanal, verlos, editarlos y asignarlos a clientes. Se agregó una nueva vista para ver ejericios, crear nuevos y agregar variantes a los existentes.",
+  },
+  {
+    date: new Date("2024-07-02 00:00:00"),
+    version: "1.1.0",
+    description: "Se agregó un nuevo filtro de ejercicios por categoria.",
+  },
+  {
+    date: new Date("2024-07-06 00:00:00"),
+    version: "1.2.0",
+    description:
+      "Se agregaron más de 50 ejercicios nuevos. Se agregó la posibilidad de incluir varios ejercicios en una super serie.",
+  },
+  {
+    date: new Date("2024-07-07 00:00:00"),
+    version: "1.3.0",
+    description:
+      "Se actualizó la pantalla de actualizaciones. Se actualizó la arquitectura del código.",
+  },
+  {
+    date: new Date("2024-07-14 00:00:00"),
+    version: "1.4.0",
+    description:
+      "Ahora se puede descargar un plan en formato pdf. Se actualizó la pantalla de planes para los clientes. Ahora se pueden ver los ejercicios que se están seleccionado para agregarlos a un plan. Se arreglaron bugs y se hicieron varias mejoras visuales.",
+  },
+  {
+    date: new Date("2024-07-28 00:00:00"),
+    version: "1.5.0",
+    description:
+      "Nueva barra de navegación para dispositivos móviles. Ahora tus clientes pueden cargar su ficha médica cuando entran por primera vez en la aplicación.",
+  },
+];
+
 // Exercise
 export const exercisesCategoriesSeed = [
   { name: "Pecho" },

@@ -1,7 +1,11 @@
 import { db } from "..";
 import { eq } from "drizzle-orm";
 import { CustomError } from "../../../domain/errors/custom.error";
-import { roles, subscriptionPlans } from "../schemas/user/user.schemas";
+import {
+  appReleases,
+  roles,
+  subscriptionPlans,
+} from "../schemas/user/user.schemas";
 import {
   exercises,
   daysOfWeek,
@@ -14,12 +18,13 @@ import {
   exercisesSeed,
   daysOfWeekSeed,
   plansTypesSeed,
+  appReleasesSeed,
   plansCategoriesSeed,
   subscriptionPlansSeed,
   exercisesCategoriesSeed,
 } from "./data";
 
-async function createRoles(tx: any) {
+async function createRoles(tx: typeof db = db) {
   try {
     for (const role of rolesSeed) {
       const [roleExist] = await tx
@@ -37,7 +42,7 @@ async function createRoles(tx: any) {
   console.log("Roles created successfuly ✅");
 }
 
-async function createSubscriptionPlans(tx: any) {
+async function createSubscriptionPlans(tx: typeof db = db) {
   try {
     for (const subscriptionPlan of subscriptionPlansSeed) {
       const [subscriptionPlanExist] = await tx
@@ -57,7 +62,27 @@ async function createSubscriptionPlans(tx: any) {
   console.log("Subscription plans created successfuly ✅");
 }
 
-async function createExercisesCategories(tx: any) {
+async function createAppReleases(tx: typeof db = db) {
+  try {
+    for (const appRelease of appReleasesSeed) {
+      const [appReleaseExist] = await tx
+        .select()
+        .from(appReleases)
+        .where(eq(appReleases.version, appRelease.version));
+
+      if (!appReleaseExist) {
+        await tx.insert(appReleases).values(appRelease);
+      }
+    }
+  } catch (error) {
+    throw CustomError.internalServer(
+      `Error creating app releases. ${error} 🚫`
+    );
+  }
+  console.log("App releases plans created successfuly ✅");
+}
+
+async function createExercisesCategories(tx: typeof db = db) {
   try {
     for (const exerciseCategory of exercisesCategoriesSeed) {
       const [exerciseCategoryExist] = await tx
@@ -77,7 +102,7 @@ async function createExercisesCategories(tx: any) {
   console.log("Exercises categories created successfuly ✅");
 }
 
-async function createExercises(tx: any) {
+async function createExercises(tx: typeof db = db) {
   try {
     for (const exercise of exercisesSeed) {
       const [exerciseExist] = await tx
@@ -102,7 +127,7 @@ async function createExercises(tx: any) {
   console.log("Exercises created successfuly ✅");
 }
 
-async function createPlanCategories(tx: any) {
+async function createPlanCategories(tx: typeof db = db) {
   try {
     for (const planCategory of plansCategoriesSeed) {
       const [planCategoryExist] = await tx
@@ -122,7 +147,7 @@ async function createPlanCategories(tx: any) {
   console.log("Plans categories created successfuly ✅");
 }
 
-async function createPlansTypes(tx: any) {
+async function createPlansTypes(tx: typeof db = db) {
   try {
     for (const planType of plansTypesSeed) {
       const [planTypeExist] = await tx
@@ -140,7 +165,7 @@ async function createPlansTypes(tx: any) {
   console.log("Plans types created successfuly ✅");
 }
 
-async function createDaysOfWeek(tx: any) {
+async function createDaysOfWeek(tx: typeof db = db) {
   try {
     for (const dayOfWeek of daysOfWeekSeed) {
       const [dayOfWeekExist] = await tx
@@ -161,9 +186,10 @@ async function createDaysOfWeek(tx: any) {
 }
 
 (async () => {
-  await db.transaction(async (tx) => {
+  await db.transaction(async (tx: typeof db) => {
     await createRoles(tx);
     await createSubscriptionPlans(tx);
+    await createAppReleases(tx);
     await createExercisesCategories(tx);
     await createExercises(tx);
     await createPlanCategories(tx);
