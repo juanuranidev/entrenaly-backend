@@ -49,6 +49,15 @@ export class UserController {
       this.handleError(error, res);
     }
   };
+  public readAppReleases = async (req: Request, res: Response) => {
+    try {
+      const appReleasesList = await this.userRepository.readAppReleases();
+
+      return res.status(201).json(appReleasesList);
+    } catch (error) {
+      this.handleError(error, res);
+    }
+  };
   public readUser = async (req: Request, res: Response) => {
     try {
       const { id: trainerId } = req.body.user;
