@@ -4,6 +4,7 @@ import {
   clients,
   invites,
   subscriptionPlans,
+  appReleases,
 } from "../../db/schemas";
 import { CreateUserWithGoogleDto } from "../../../domain/dtos/user/create-user-with-google.dto";
 import { SubscriptionPlanEntity } from "../../../domain/entities/user/subscription-plan.entity";
@@ -17,6 +18,7 @@ import { RoleEntity } from "../../../domain/entities/user/role.entity";
 import { UserEntity } from "../../../domain/entities/user/user.entity";
 import { eq } from "drizzle-orm";
 import { db } from "../../db";
+import { AppReleaseEntity } from "../../../domain/entities/plan/app-release";
 
 export class UserRepositoryImpl implements UserRepository {
   async createUser(
@@ -117,6 +119,21 @@ export class UserRepositoryImpl implements UserRepository {
       }
 
       return userExist;
+    } catch (error: unknown) {
+      console.log(error);
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+  async readAppReleases(): Promise<AppReleaseEntity[] | CustomError> {
+    try {
+      const appReleaseList = await db.select().from(appReleases);
+
+      return appReleaseList.map((appRelease) =>
+        AppReleaseEntity.create(appRelease)
+      );
     } catch (error: unknown) {
       console.log(error);
       if (error instanceof CustomError) {
