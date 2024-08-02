@@ -10,7 +10,8 @@ export class ClientEntity {
     public height?: string,
     public goals?: string,
     public injuries?: string,
-    public medicalConditions?: string
+    public medicalConditions?: string,
+    public typeOfBody?: string
   ) {}
 
   public static create(data: { [key: string]: any }): ClientEntity {
@@ -24,6 +25,7 @@ export class ClientEntity {
       height,
       injuries,
       createdAt,
+      typeOfBody,
       medicalConditions,
       hasCompletedOnboarding,
     } = data;
@@ -46,7 +48,8 @@ export class ClientEntity {
       height,
       goals,
       injuries,
-      medicalConditions
+      medicalConditions,
+      typeOfBody
     );
   }
 }

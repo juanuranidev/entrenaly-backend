@@ -132,8 +132,15 @@ export class ClientRepositoryImpl implements ClientRepository {
     updateClientMedicalInformationDto: UpdateClientMedicalInformationDto
   ): Promise<ClientEntity | CustomError> {
     try {
-      const { goals, weight, height, injuries, clientId, medicalConditions } =
-        updateClientMedicalInformationDto;
+      const {
+        goals,
+        weight,
+        height,
+        injuries,
+        clientId,
+        medicalConditions,
+        typeOfBody,
+      } = updateClientMedicalInformationDto;
 
       const [updatedClient] = await db
         .update(clients)
@@ -143,6 +150,7 @@ export class ClientRepositoryImpl implements ClientRepository {
           goals: goals,
           injuries: injuries,
           medicalConditions: medicalConditions,
+          typeOfBody: typeOfBody,
         })
         .where(and(eq(clients.id, clientId)))
         .returning();

@@ -18,6 +18,7 @@ export const clients = pgTable("clients", {
   hasCompletedOnboarding: boolean("has_completed_onboarding")
     .notNull()
     .default(false),
+  typeOfBody: varchar("type_of_body", { length: 256 }),
 });
 
 export const clientsRelations = relations(clients, ({ one, many }) => ({
