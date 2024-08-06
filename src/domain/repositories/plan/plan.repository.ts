@@ -5,10 +5,14 @@ import { DayOfWeekEntity } from "../../entities/plan/day-of-week.entity";
 import { PlanCategoryEntity } from "../../entities/plan/plan-category.entity";
 import { UpdateWeeklyPlanDto } from "../../dtos/plan/update-weekly-plan.dto";
 import { CreateWeeklyPlanDto } from "../../dtos/plan/create-weekly-plan.dto";
+import { CreateCircuitPlanDto } from "../../dtos/plan/create-circuit-plan.dto";
 
 export abstract class PlanRepository {
   abstract createWeeklyPlan(
     createWeeklyPlanDto: CreateWeeklyPlanDto
+  ): Promise<PlanEntity | CustomError>;
+  abstract createCircuitPlan(
+    createCircuitPlanDto: CreateCircuitPlanDto
   ): Promise<PlanEntity | CustomError>;
   abstract readPlansTypes(): Promise<PlanTypeEntity[] | CustomError>;
   abstract readDaysOfWeek(): Promise<DayOfWeekEntity[] | CustomError>;

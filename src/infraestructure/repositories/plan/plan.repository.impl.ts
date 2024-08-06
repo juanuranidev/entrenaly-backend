@@ -11,6 +11,7 @@ import {
   exercisesCategories,
 } from "../../db/schemas";
 import { ExerciseCategoryEntity } from "../../../domain/entities/exercise/exercise-category.entity";
+import { CreateCircuitPlanDto } from "../../../domain/dtos/plan/create-circuit-plan.dto";
 import { CreateWeeklyPlanDto } from "../../../domain/dtos/plan/create-weekly-plan.dto";
 import { UpdateWeeklyPlanDto } from "../../../domain/dtos/plan/update-weekly-plan.dto";
 import { PlanCategoryEntity } from "../../../domain/entities/plan/plan-category.entity";
@@ -93,6 +94,20 @@ export class PlanRepositoryImpl implements PlanRepository {
           category: PlanCategoryEntity.create(planCategoryFound),
         });
       });
+    } catch (error: unknown) {
+      console.log(error);
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+  async createCircuitPlan(
+    createWeeklyPlanDto: CreateCircuitPlanDto
+  ): Promise<PlanEntity | CustomError> {
+    try {
+      console.log(createWeeklyPlanDto);
+      throw CustomError.internalServer();
     } catch (error: unknown) {
       console.log(error);
       if (error instanceof CustomError) {
