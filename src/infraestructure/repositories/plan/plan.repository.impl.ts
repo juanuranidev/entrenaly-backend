@@ -9,6 +9,7 @@ import {
   plansExercises,
   plansCategories,
   exercisesCategories,
+  plansCircuit,
 } from "../../db/schemas";
 import { ExerciseCategoryEntity } from "../../../domain/entities/exercise/exercise-category.entity";
 import { CreateCircuitPlanDto } from "../../../domain/dtos/plan/create-circuit-plan.dto";
@@ -103,11 +104,80 @@ export class PlanRepositoryImpl implements PlanRepository {
     }
   }
   async createCircuitPlan(
-    createWeeklyPlanDto: CreateCircuitPlanDto
+    createCircuitPlanDto: CreateCircuitPlanDto
   ): Promise<PlanEntity | CustomError> {
     try {
-      console.log(createWeeklyPlanDto);
-      throw CustomError.internalServer();
+      return await db.transaction(async (tx) => {
+        const [planTypeFound] = await tx
+          .select()
+          .from(plansTypes)
+          .where(eq(plansTypes.name, PLANS_CONSTANTS.TYPES.WEEKLY));
+
+        const planUuid = uuidAdapter.generate();
+        const [planCreated] = await tx
+          .insert(plans)
+          .values({
+            id: planUuid,
+            typeId: planTypeFound.id,
+            name: createCircuitPlanDto.name,
+            userId: createCircuitPlanDto.trainerId,
+            categoryId: createCircuitPlanDto.categoryId,
+          })
+          .returning();
+
+        for (const day of createCircuitPlanDto.days) {
+          const [planDayCreated] = await tx
+            .insert(plansDays)
+            .values({
+              planId: planCreated?.id,
+              dayOfWeekId: day.dayOfWeek?.id,
+            })
+            .returning();
+
+          for (const circuit of day.circuits) {
+            const [circuitCreated] = await tx
+              .insert(plansCircuit)
+              .values({
+                order: circuit.order,
+                planDayId: planDayCreated.id,
+              })
+              .returning();
+
+            for (const exercise of circuit.exercises) {
+              await tx
+                .insert(plansExercises)
+                .values({
+                  exerciseId: exercise.id,
+                  description: exercise.description,
+                  superset: exercise.superset,
+                  planCircuitId: circuitCreated.id,
+                })
+                .returning();
+            }
+          }
+        }
+
+        for (const client of createCircuitPlanDto.clients) {
+          await tx
+            .insert(clientsPlans)
+            .values({
+              planId: planCreated.id,
+              clientId: client.id,
+            })
+            .returning();
+        }
+
+        const [planCategoryFound] = await tx
+          .select()
+          .from(plansCategories)
+          .where(eq(plansCategories.id, planCreated.categoryId));
+
+        return PlanEntity.create({
+          ...planCreated,
+          type: PlanTypeEntity.create(planTypeFound),
+          category: PlanCategoryEntity.create(planCategoryFound),
+        });
+      });
     } catch (error: unknown) {
       console.log(error);
       if (error instanceof CustomError) {
