@@ -6,6 +6,7 @@ import { PlanCategoryEntity } from "../../entities/plan/plan-category.entity";
 import { UpdateWeeklyPlanDto } from "../../dtos/plan/update-weekly-plan.dto";
 import { CreateWeeklyPlanDto } from "../../dtos/plan/create-weekly-plan.dto";
 import { CreateCircuitPlanDto } from "../../dtos/plan/create-circuit-plan.dto";
+import { UpdateCircuitPlanDto } from "../../dtos/plan/update-circuit-plan.dto";
 
 export abstract class PlanRepository {
   abstract createWeeklyPlan(
@@ -26,6 +27,9 @@ export abstract class PlanRepository {
   abstract readWeeklyPlan(planId: any): Promise<PlanEntity | CustomError>;
   abstract updateWeeklyPlan(
     updateWeeklyPlanDto: UpdateWeeklyPlanDto
+  ): Promise<PlanEntity | CustomError>;
+  abstract updateCircuitPlan(
+    updateCircuitPlanDto: UpdateCircuitPlanDto
   ): Promise<PlanEntity | CustomError>;
   abstract deleteWeeklyPlan(
     planId: any,

@@ -28,6 +28,7 @@ import { CustomError } from "../../../domain/errors/custom.error";
 import { uuidAdapter } from "../../../config/adapters/uuid.adapter";
 import { PlanEntity } from "../../../domain/entities/plan/plan.entity";
 import { db } from "../../db";
+import { UpdateCircuitPlanDto } from "../../../domain/dtos/plan/update-circuit-plan.dto";
 
 export class PlanRepositoryImpl implements PlanRepository {
   async createWeeklyPlan(
@@ -505,6 +506,122 @@ export class PlanRepositoryImpl implements PlanRepository {
         }
 
         for (const client of updateWeeklyPlanDto.clients) {
+          await tx.insert(clientsPlans).values({
+            planId: planUpdated.id,
+            clientId: client.id,
+          });
+        }
+
+        const [planTypeFound] = await tx
+          .select()
+          .from(plansTypes)
+          .where(eq(plansTypes.id, planUpdated.typeId));
+
+        const [planCategoryFound] = await tx
+          .select()
+          .from(plansCategories)
+          .where(eq(plansCategories.id, planUpdated.categoryId));
+
+        return PlanEntity.create({
+          ...planUpdated,
+          category: PlanCategoryEntity.create(planCategoryFound),
+          type: PlanTypeEntity.create(planTypeFound),
+        });
+      });
+    } catch (error: unknown) {
+      console.log(error);
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+  async updateCircuitPlan(
+    updateCircuitPlanDto: UpdateCircuitPlanDto
+  ): Promise<PlanEntity | CustomError> {
+    try {
+      return await db.transaction(async (tx) => {
+        const [planUpdated] = await tx
+          .update(plans)
+          .set({
+            name: updateCircuitPlanDto.name,
+            categoryId: updateCircuitPlanDto.categoryId,
+          })
+          .where(eq(plans.id, updateCircuitPlanDto.planId))
+          .returning();
+
+        const plansDaysList = await tx
+          .select({ id: plansDays.id })
+          .from(plansDays)
+          .where(eq(plansDays.planId, planUpdated.id));
+
+        for (const day of plansDaysList) {
+          await tx
+            .update(plansExercises)
+            .set({ isActive: false })
+            .where(eq(plansExercises.planDayId, day?.id));
+
+          await tx
+            .update(plansCircuit)
+            .set({ isActive: false })
+            .where(eq(plansCircuit.planDayId, day?.id));
+
+          await tx
+            .update(plansDays)
+            .set({ isActive: false })
+            .where(eq(plansDays.id, day?.id));
+        }
+
+        for (const day of updateCircuitPlanDto.days) {
+          const [planDayCreated] = await tx
+            .insert(plansDays)
+            .values({
+              planId: planUpdated?.id,
+              dayOfWeekId: day.dayOfWeek?.id,
+            })
+            .returning();
+
+          for (const circuit of day.circuits) {
+            const [circuitCreated] = await tx
+              .insert(plansCircuit)
+              .values({
+                order: circuit.order,
+                planDayId: planDayCreated.id,
+              })
+              .returning();
+
+            for (const exercise of circuit.exercises) {
+              await tx
+                .insert(plansExercises)
+                .values({
+                  exerciseId: exercise.id,
+                  description: exercise.description,
+                  superset: exercise.superset,
+                  planCircuitId: circuitCreated.id,
+                })
+                .returning();
+            }
+          }
+        }
+
+        const allClientsPlans: { id: string }[] = await tx
+          .select({ id: clientsPlans.clientId })
+          .from(clientsPlans)
+          .where(eq(clientsPlans.planId, planUpdated.id));
+
+        for (const client of allClientsPlans) {
+          await tx
+            .update(clientsPlans)
+            .set({ isActive: false })
+            .where(
+              and(
+                eq(clientsPlans.clientId, client.id),
+                eq(clientsPlans.planId, planUpdated.id)
+              )
+            );
+        }
+
+        for (const client of updateCircuitPlanDto.clients) {
           await tx.insert(clientsPlans).values({
             planId: planUpdated.id,
             clientId: client.id,
