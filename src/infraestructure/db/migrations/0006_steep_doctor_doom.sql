@@ -1,0 +1,1 @@
+ALTER TABLE "plans_circuit" ADD COLUMN "description" varchar(256) NOT NULL;

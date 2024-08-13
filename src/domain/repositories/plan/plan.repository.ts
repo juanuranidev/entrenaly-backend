@@ -25,6 +25,7 @@ export abstract class PlanRepository {
     clientId: any
   ): Promise<PlanEntity[] | CustomError>;
   abstract readWeeklyPlan(planId: any): Promise<PlanEntity | CustomError>;
+  abstract readCircuitPlan(planId: any): Promise<PlanEntity | CustomError>;
   abstract updateWeeklyPlan(
     updateWeeklyPlanDto: UpdateWeeklyPlanDto
   ): Promise<PlanEntity | CustomError>;

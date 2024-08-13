@@ -9,9 +9,10 @@ import {
   plansExercises,
   plansCategories,
   exercisesCategories,
-  plansCircuit,
+  daysCircuit,
 } from "../../db/schemas";
 import { ExerciseCategoryEntity } from "../../../domain/entities/exercise/exercise-category.entity";
+import { UpdateCircuitPlanDto } from "../../../domain/dtos/plan/update-circuit-plan.dto";
 import { CreateCircuitPlanDto } from "../../../domain/dtos/plan/create-circuit-plan.dto";
 import { CreateWeeklyPlanDto } from "../../../domain/dtos/plan/create-weekly-plan.dto";
 import { UpdateWeeklyPlanDto } from "../../../domain/dtos/plan/update-weekly-plan.dto";
@@ -28,7 +29,6 @@ import { CustomError } from "../../../domain/errors/custom.error";
 import { uuidAdapter } from "../../../config/adapters/uuid.adapter";
 import { PlanEntity } from "../../../domain/entities/plan/plan.entity";
 import { db } from "../../db";
-import { UpdateCircuitPlanDto } from "../../../domain/dtos/plan/update-circuit-plan.dto";
 
 export class PlanRepositoryImpl implements PlanRepository {
   async createWeeklyPlan(
@@ -112,7 +112,7 @@ export class PlanRepositoryImpl implements PlanRepository {
         const [planTypeFound] = await tx
           .select()
           .from(plansTypes)
-          .where(eq(plansTypes.name, PLANS_CONSTANTS.TYPES.WEEKLY));
+          .where(eq(plansTypes.name, PLANS_CONSTANTS.TYPES.CIRCUIT));
 
         const planUuid = uuidAdapter.generate();
         const [planCreated] = await tx
@@ -137,8 +137,9 @@ export class PlanRepositoryImpl implements PlanRepository {
 
           for (const circuit of day.circuits) {
             const [circuitCreated] = await tx
-              .insert(plansCircuit)
+              .insert(daysCircuit)
               .values({
+                description: circuit.description,
                 order: circuit.order,
                 planDayId: planDayCreated.id,
               })
@@ -425,6 +426,165 @@ export class PlanRepositoryImpl implements PlanRepository {
       throw CustomError.internalServer();
     }
   }
+  async readCircuitPlan(planId: string): Promise<PlanEntity | CustomError> {
+    try {
+      // Buscar el plan
+      const [planFound] = await db
+        .select({
+          id: plans.id,
+          name: plans.name,
+          typeId: plans.typeId,
+          userId: plans.userId,
+          categoryId: plans.categoryId,
+          createdAt: plans.createdAt,
+        })
+        .from(plans)
+        .where(and(eq(plans.id, planId), eq(plans.isActive, true)))
+        .leftJoin(plansTypes, eq(plansTypes.id, plans.typeId))
+        .leftJoin(plansCategories, eq(plansCategories.id, plans.categoryId));
+
+      // Buscar los clientes asociados al plan
+      const clientsPlansList = await db
+        .select({ clientId: clientsPlans.clientId })
+        .from(clientsPlans)
+        .where(
+          and(
+            eq(clientsPlans.planId, planFound.id),
+            eq(clientsPlans.isActive, true)
+          )
+        );
+
+      // Buscar los días del plan y los circuitos asociados
+      const planDaysList = await db
+        .select({
+          planDayId: plansDays.id,
+          dayOfWeekId: plansDays.dayOfWeekId,
+          dayOfWeekName: daysOfWeek.name,
+          dayOfWeekOrder: daysOfWeek.order,
+          circuitId: daysCircuit.id,
+          circuitOrder: daysCircuit.order,
+          circuitDescription: daysCircuit.description,
+          circuitIsActive: daysCircuit.isActive,
+        })
+        .from(plansDays)
+        .leftJoin(daysOfWeek, eq(plansDays.dayOfWeekId, daysOfWeek.id))
+        .leftJoin(daysCircuit, eq(plansDays.id, daysCircuit.planDayId))
+        .where(
+          and(eq(plansDays.planId, planFound.id), eq(plansDays.isActive, true))
+        );
+
+      // Agrupar circuitos por día
+      const circuitsByDay: {
+        [dayId: string]: { dayOfWeek: any; circuits: any[] };
+      } = {};
+
+      planDaysList.forEach((planDay) => {
+        const {
+          planDayId,
+          dayOfWeekId,
+          dayOfWeekName,
+          dayOfWeekOrder,
+          circuitId,
+          circuitOrder,
+          circuitDescription,
+          circuitIsActive,
+        } = planDay;
+
+        if (!circuitsByDay[planDayId]) {
+          circuitsByDay[planDayId] = {
+            dayOfWeek: {
+              id: dayOfWeekId,
+              name: dayOfWeekName,
+              order: dayOfWeekOrder,
+            },
+            circuits: [],
+          };
+        }
+
+        if (circuitId) {
+          const existingCircuit = circuitsByDay[planDayId].circuits.find(
+            (circuit) => circuit.id === circuitId
+          );
+
+          if (!existingCircuit) {
+            circuitsByDay[planDayId].circuits.push({
+              id: circuitId,
+              order: circuitOrder,
+              description: circuitDescription,
+              isActive: circuitIsActive,
+              exercises: [], // Inicialmente vacío
+            });
+          }
+        }
+      });
+
+      // Buscar los ejercicios asociados a cada circuito
+      const planExercisesList = await db
+        .select({
+          planDayId: plansExercises.planDayId,
+          planCircuitId: plansExercises.planCircuitId,
+          exerciseId: plansExercises.exerciseId,
+          description: plansExercises.description,
+          superset: plansExercises.superset,
+        })
+        .from(plansExercises)
+        .leftJoin(exercises, eq(exercises.id, plansExercises.exerciseId))
+        .leftJoin(plansDays, eq(plansExercises.planDayId, plansDays.id))
+        .leftJoin(daysCircuit, eq(plansExercises.planCircuitId, daysCircuit.id))
+        .where(
+          and(
+            eq(plansDays.planId, planFound.id),
+            eq(plansDays.isActive, true),
+            eq(plansExercises.isActive, true)
+          )
+        );
+
+      // Agregar los ejercicios a sus respectivos circuitos
+      planExercisesList.forEach((exercise) => {
+        const { planDayId, planCircuitId, exerciseId, description, superset } =
+          exercise;
+
+        if (circuitsByDay[planDayId!]) {
+          const circuit = circuitsByDay[planDayId!].circuits.find(
+            (c) => c.id === planCircuitId
+          );
+
+          if (circuit) {
+            circuit.exercises.push({
+              id: exerciseId,
+              description,
+              superset,
+              // Otros campos del ejercicio pueden ser añadidos aquí
+            });
+          }
+        }
+      });
+
+      // Formatear los resultados
+      const formattedDays = Object.values(circuitsByDay).map((day) => ({
+        id: day.dayOfWeek.id,
+        planId: planFound.id,
+        dayOfWeek: day.dayOfWeek,
+        circuits: day.circuits,
+      }));
+
+      return PlanEntity.create({
+        id: planFound.id,
+        name: planFound.name,
+        category: PlanCategoryEntity.create({ id: planFound.categoryId }), // Ajustar según tu lógica
+        type: PlanTypeEntity.create({ id: planFound.typeId }), // Ajustar según tu lógica
+        days: formattedDays,
+        clients: clientsPlansList.map((client) => client.clientId),
+      });
+    } catch (error: unknown) {
+      console.error(error);
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw CustomError.internalServer();
+    }
+  }
+
   async updateWeeklyPlan(
     updateWeeklyPlanDto: UpdateWeeklyPlanDto
   ): Promise<PlanEntity | CustomError> {
@@ -562,9 +722,9 @@ export class PlanRepositoryImpl implements PlanRepository {
             .where(eq(plansExercises.planDayId, day?.id));
 
           await tx
-            .update(plansCircuit)
+            .update(daysCircuit)
             .set({ isActive: false })
-            .where(eq(plansCircuit.planDayId, day?.id));
+            .where(eq(daysCircuit.planDayId, day?.id));
 
           await tx
             .update(plansDays)
@@ -583,8 +743,9 @@ export class PlanRepositoryImpl implements PlanRepository {
 
           for (const circuit of day.circuits) {
             const [circuitCreated] = await tx
-              .insert(plansCircuit)
+              .insert(daysCircuit)
               .values({
+                description: circuit.description,
                 order: circuit.order,
                 planDayId: planDayCreated.id,
               })

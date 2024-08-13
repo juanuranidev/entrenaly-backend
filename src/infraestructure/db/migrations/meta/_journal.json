@@ -43,6 +43,13 @@
       "when": 1722824051923,
       "tag": "0005_giant_lorna_dane",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1723431618340,
+      "tag": "0006_steep_doctor_doom",
+      "breakpoints": true
     }
   ]
 }

@@ -15,6 +15,11 @@ export class PlanRoutes {
       [UserMiddleware.validateToken],
       planController.createWeeklyPlan
     );
+    router.post(
+      "/v1/create/circuit-plan",
+      [UserMiddleware.validateToken],
+      planController.createCircuitPlan
+    );
     router.get("/v1/read/plans-types", planController.readPlansTypes);
     router.get("/v1/read/days-of-week", planController.readDaysOfWeek);
     router.get("/v1/read/plan-categories", planController.readPlansCategories);
@@ -29,6 +34,7 @@ export class PlanRoutes {
       planController.readPlansByClientId
     );
     router.get("/v1/read/weekly-plan", planController.readWeeklyPlan);
+    router.get("/v1/read/circuit-plan", planController.readCircuitPlan);
     router.post(
       "/v1/update/weekly-plan",
       [UserMiddleware.validateToken],

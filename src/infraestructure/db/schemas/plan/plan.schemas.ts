@@ -76,9 +76,10 @@ export const plansDays = pgTable("plans_days", {
   isActive: boolean("is_active").notNull().default(true),
 });
 
-export const plansCircuit = pgTable("plans_circuit", {
+export const daysCircuit = pgTable("plans_circuit", {
   id: serial("id").primaryKey().notNull(),
   order: integer("order").notNull(),
+  description: varchar("description", { length: 256 }).notNull(),
   isActive: boolean("is_active").notNull().default(true),
   planDayId: integer("plan_day_id").references(() => plansDays.id),
 });
@@ -86,7 +87,7 @@ export const plansCircuit = pgTable("plans_circuit", {
 export const plansExercises = pgTable("plans_exercises", {
   id: serial("id").primaryKey().notNull(),
   planDayId: integer("plan_day_id").references(() => plansDays.id),
-  planCircuitId: integer("plan_circuit_id").references(() => plansCircuit.id),
+  planCircuitId: integer("plan_circuit_id").references(() => daysCircuit.id),
   exerciseId: integer("exercise_id")
     .notNull()
     .references(() => exercises.id),

@@ -3,6 +3,7 @@ import { UpdateWeeklyPlanDto } from "../../domain/dtos/plan/update-weekly-plan.d
 import { Request, Response } from "express";
 import { PlanRepository } from "../../domain/repositories/plan/plan.repository";
 import { CustomError } from "../../domain/errors/custom.error";
+import { CreateCircuitPlanDto } from "../../domain/dtos/plan/create-circuit-plan.dto";
 
 export class PlanController {
   constructor(private readonly planRepository: PlanRepository) {}
@@ -31,6 +32,29 @@ export class PlanController {
       );
 
       return res.status(201).json(weeklyPlan);
+    } catch (error) {
+      console.log(error);
+      this.handleError(error, res);
+    }
+  };
+  public createCircuitPlan = async (req: Request, res: Response) => {
+    try {
+      const { data } = req.body;
+      const { id: trainerId } = req.body.user;
+
+      const [error, createCircuitPlanDto] = CreateCircuitPlanDto.create({
+        ...data,
+        trainerId,
+      });
+      if (error) {
+        return res.status(400).json({ error });
+      }
+
+      const circuitPlan = await this.planRepository.createCircuitPlan(
+        createCircuitPlanDto!
+      );
+
+      return res.status(201).json(circuitPlan);
     } catch (error) {
       console.log(error);
       this.handleError(error, res);
@@ -95,6 +119,18 @@ export class PlanController {
       const { planId } = req.query;
 
       const plan = await this.planRepository.readWeeklyPlan(planId);
+
+      return res.status(201).json(plan);
+    } catch (error) {
+      console.log(error);
+      this.handleError(error, res);
+    }
+  };
+  public readCircuitPlan = async (req: Request, res: Response) => {
+    try {
+      const { planId } = req.query;
+
+      const plan = await this.planRepository.readCircuitPlan(planId);
 
       return res.status(201).json(plan);
     } catch (error) {

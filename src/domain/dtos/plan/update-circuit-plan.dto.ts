@@ -15,6 +15,7 @@ type Circuit = {
   id: number;
   planDayId: string;
   order: number;
+  description: string;
   exercises: Exercise[];
 };
 
