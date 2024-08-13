@@ -29,6 +29,7 @@ import { CustomError } from "../../../domain/errors/custom.error";
 import { uuidAdapter } from "../../../config/adapters/uuid.adapter";
 import { PlanEntity } from "../../../domain/entities/plan/plan.entity";
 import { db } from "../../db";
+import { PlanCircuitEntity } from "../../../domain/entities/plan/plan-circuit.entity";
 
 export class PlanRepositoryImpl implements PlanRepository {
   async createWeeklyPlan(
@@ -428,14 +429,13 @@ export class PlanRepositoryImpl implements PlanRepository {
   }
   async readCircuitPlan(planId: string): Promise<PlanEntity | CustomError> {
     try {
-      // Buscar el plan
       const [planFound] = await db
         .select({
           id: plans.id,
           name: plans.name,
-          typeId: plans.typeId,
+          type: plansTypes,
           userId: plans.userId,
-          categoryId: plans.categoryId,
+          category: plansCategories,
           createdAt: plans.createdAt,
         })
         .from(plans)
@@ -443,7 +443,6 @@ export class PlanRepositoryImpl implements PlanRepository {
         .leftJoin(plansTypes, eq(plansTypes.id, plans.typeId))
         .leftJoin(plansCategories, eq(plansCategories.id, plans.categoryId));
 
-      // Buscar los clientes asociados al plan
       const clientsPlansList = await db
         .select({ clientId: clientsPlans.clientId })
         .from(clientsPlans)
@@ -454,7 +453,6 @@ export class PlanRepositoryImpl implements PlanRepository {
           )
         );
 
-      // Buscar los días del plan y los circuitos asociados
       const planDaysList = await db
         .select({
           planDayId: plansDays.id,
@@ -462,6 +460,7 @@ export class PlanRepositoryImpl implements PlanRepository {
           dayOfWeekName: daysOfWeek.name,
           dayOfWeekOrder: daysOfWeek.order,
           circuitId: daysCircuit.id,
+          circuit: daysCircuit,
           circuitOrder: daysCircuit.order,
           circuitDescription: daysCircuit.description,
           circuitIsActive: daysCircuit.isActive,
@@ -474,9 +473,7 @@ export class PlanRepositoryImpl implements PlanRepository {
         );
 
       // Agrupar circuitos por día
-      const circuitsByDay: {
-        [dayId: string]: { dayOfWeek: any; circuits: any[] };
-      } = {};
+      let circuitsByDay: any = {};
 
       planDaysList.forEach((planDay) => {
         const {
@@ -497,17 +494,18 @@ export class PlanRepositoryImpl implements PlanRepository {
               name: dayOfWeekName,
               order: dayOfWeekOrder,
             },
+            planDayId: planDayId,
             circuits: [],
           };
         }
 
         if (circuitId) {
           const existingCircuit = circuitsByDay[planDayId].circuits.find(
-            (circuit) => circuit.id === circuitId
+            (circuit: any) => circuit.id === circuitId
           );
 
           if (!existingCircuit) {
-            circuitsByDay[planDayId].circuits.push({
+            circuitsByDay[planDayId].circuits.unshift({
               id: circuitId,
               order: circuitOrder,
               description: circuitDescription,
@@ -517,64 +515,89 @@ export class PlanRepositoryImpl implements PlanRepository {
           }
         }
       });
+      // console.log("=======");
+      // console.log(
+      //   Object.values(circuitsByDay).forEach((day: any) =>
+      //     console.log(day.circuits)
+      //   )
+      // );
 
-      // Buscar los ejercicios asociados a cada circuito
-      const planExercisesList = await db
-        .select({
-          planDayId: plansExercises.planDayId,
-          planCircuitId: plansExercises.planCircuitId,
-          exerciseId: plansExercises.exerciseId,
-          description: plansExercises.description,
-          superset: plansExercises.superset,
-        })
-        .from(plansExercises)
-        .leftJoin(exercises, eq(exercises.id, plansExercises.exerciseId))
-        .leftJoin(plansDays, eq(plansExercises.planDayId, plansDays.id))
-        .leftJoin(daysCircuit, eq(plansExercises.planCircuitId, daysCircuit.id))
-        .where(
-          and(
-            eq(plansDays.planId, planFound.id),
-            eq(plansDays.isActive, true),
-            eq(plansExercises.isActive, true)
-          )
-        );
-
-      // Agregar los ejercicios a sus respectivos circuitos
-      planExercisesList.forEach((exercise) => {
-        const { planDayId, planCircuitId, exerciseId, description, superset } =
-          exercise;
-
-        if (circuitsByDay[planDayId!]) {
-          const circuit = circuitsByDay[planDayId!].circuits.find(
-            (c) => c.id === planCircuitId
-          );
-
-          if (circuit) {
-            circuit.exercises.push({
-              id: exerciseId,
-              description,
-              superset,
-              // Otros campos del ejercicio pueden ser añadidos aquí
-            });
-          }
-        }
+      circuitsByDay = Object.values(circuitsByDay).map((day: any) => {
+        return PlanDayEntity.create({
+          ...day,
+          id: day.planDayId,
+          planId: planFound.id,
+          exercises: [],
+          dayOfWeek: DayOfWeekEntity.create(day.dayOfWeek),
+          circuits: day.circuits.map((circuit: any) =>
+            PlanCircuitEntity.create(circuit)
+          ),
+        });
       });
+      console.log(
+        "test",
+        circuitsByDay.forEach((circuit: any) => console.log(circuit))
+      );
 
-      // Formatear los resultados
-      const formattedDays = Object.values(circuitsByDay).map((day) => ({
-        id: day.dayOfWeek.id,
-        planId: planFound.id,
-        dayOfWeek: day.dayOfWeek,
-        circuits: day.circuits,
-      }));
+      // // Buscar los ejercicios asociados a cada circuito
+      // const planExercisesList = await db
+      //   .select({
+      //     planDayId: plansExercises.planDayId,
+      //     planCircuitId: plansExercises.planCircuitId,
+      //     exerciseId: plansExercises.exerciseId,
+      //     description: plansExercises.description,
+      //     superset: plansExercises.superset,
+      //   })
+      //   .from(plansExercises)
+      //   .leftJoin(exercises, eq(exercises.id, plansExercises.exerciseId))
+      //   .leftJoin(plansDays, eq(plansExercises.planDayId, plansDays.id))
+      //   .leftJoin(daysCircuit, eq(plansExercises.planCircuitId, daysCircuit.id))
+      //   .where(
+      //     and(
+      //       eq(plansDays.planId, planFound.id),
+      //       eq(plansDays.isActive, true),
+      //       eq(plansExercises.isActive, true)
+      //     )
+      //   );
+
+      // // Agregar los ejercicios a sus respectivos circuitos
+      // planExercisesList.forEach((exercise) => {
+      //   const { planDayId, planCircuitId, exerciseId, description, superset } =
+      //     exercise;
+
+      //   if (circuitsByDay[planDayId!]) {
+      //     const circuit = circuitsByDay[planDayId!].circuits.find(
+      //       (c) => c.id === planCircuitId
+      //     );
+
+      //     if (circuit) {
+      //       circuit.exercises.push({
+      //         id: exerciseId,
+      //         description,
+      //         superset,
+      //         // Otros campos del ejercicio pueden ser añadidos aquí
+      //       });
+      //     }
+      //   }
+      // });
+
+      // // Formatear los resultados
+      // const formattedDays = Object.values(circuitsByDay).map((day) => ({
+      //   id: day.dayOfWeek.id,
+      //   planId: planFound.id,
+      //   dayOfWeek: day.dayOfWeek,
+      //   circuits: day.circuits,
+      // }));
+      console.log(planFound);
 
       return PlanEntity.create({
         id: planFound.id,
         name: planFound.name,
-        category: PlanCategoryEntity.create({ id: planFound.categoryId }), // Ajustar según tu lógica
-        type: PlanTypeEntity.create({ id: planFound.typeId }), // Ajustar según tu lógica
-        days: formattedDays,
+        createdAt: planFound.createdAt,
         clients: clientsPlansList.map((client) => client.clientId),
+        type: PlanTypeEntity.create(planFound.type!),
+        category: PlanCategoryEntity.create(planFound.category!),
+        days: circuitsByDay,
       });
     } catch (error: unknown) {
       console.error(error);
