@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import { PlanRepository } from "../../domain/repositories/plan/plan.repository";
 import { CustomError } from "../../domain/errors/custom.error";
 import { CreateCircuitPlanDto } from "../../domain/dtos/plan/create-circuit-plan.dto";
+import { UpdateCircuitPlanDto } from "../../domain/dtos/plan/update-circuit-plan.dto";
 
 export class PlanController {
   constructor(private readonly planRepository: PlanRepository) {}
@@ -153,6 +154,29 @@ export class PlanController {
 
       const plan = await this.planRepository.updateWeeklyPlan(
         updateWeeklyPlanDto!
+      );
+
+      return res.status(201).json(plan);
+    } catch (error) {
+      console.log(error);
+      this.handleError(error, res);
+    }
+  };
+  public updateCircuitPlan = async (req: Request, res: Response) => {
+    try {
+      const { data } = req.body;
+      const { id: trainerId } = req.body.user;
+
+      const [error, updateCircuitPlanDto] = UpdateCircuitPlanDto.create({
+        ...data,
+        trainerId,
+      });
+      if (error) {
+        return res.status(400).json({ error });
+      }
+
+      const plan = await this.planRepository.updateCircuitPlan(
+        updateCircuitPlanDto!
       );
 
       return res.status(201).json(plan);

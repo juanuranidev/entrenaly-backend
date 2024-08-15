@@ -40,6 +40,11 @@ export class PlanRoutes {
       [UserMiddleware.validateToken],
       planController.updateWeeklyPlan
     );
+    router.post(
+      "/v1/update/circuit-plan",
+      [UserMiddleware.validateToken],
+      planController.updateCircuitPlan
+    );
     router.delete(
       "/v1/delete/weekly-plan",
       [UserMiddleware.validateToken],

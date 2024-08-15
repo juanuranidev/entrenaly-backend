@@ -7,13 +7,15 @@ export class ExerciseEntity {
     public name: string,
     public category: ExerciseCategoryEntity,
     public hasUser: boolean,
+    public description?: string,
     public video?: string,
     public image?: string,
     public variant?: VariantEntity | null
   ) {}
 
   public static create(data: { [key: string]: any }): ExerciseEntity {
-    const { id, name, video, category, variant, hasUser, image } = data;
+    const { id, name, description, video, category, variant, hasUser, image } =
+      data;
 
     if (!id) throw "id is required";
     if (!name) throw "name is required";
@@ -29,6 +31,7 @@ export class ExerciseEntity {
       name,
       category,
       hasUser,
+      description,
       video,
       image,
       variant

@@ -456,71 +456,101 @@ export class PlanRepositoryImpl implements PlanRepository {
       const planDaysList = await db
         .select({
           planDayId: plansDays.id,
-          dayOfWeekId: plansDays.dayOfWeekId,
-          dayOfWeekName: daysOfWeek.name,
-          dayOfWeekOrder: daysOfWeek.order,
+          dayOfWeek: daysOfWeek,
           circuitId: daysCircuit.id,
           circuit: daysCircuit,
-          circuitOrder: daysCircuit.order,
-          circuitDescription: daysCircuit.description,
-          circuitIsActive: daysCircuit.isActive,
+          exercises: exercises,
+          variants: variants,
+          exercisesCategories: exercisesCategories,
+          exerciseDescription: plansExercises.description,
         })
         .from(plansDays)
         .leftJoin(daysOfWeek, eq(plansDays.dayOfWeekId, daysOfWeek.id))
         .leftJoin(daysCircuit, eq(plansDays.id, daysCircuit.planDayId))
+        .leftJoin(
+          plansExercises,
+          and(
+            eq(plansExercises.isActive, true),
+            eq(plansExercises.planCircuitId, daysCircuit.id)
+          )
+        )
+        .leftJoin(
+          exercises,
+          and(
+            eq(exercises.isActive, true),
+            eq(exercises.id, plansExercises.exerciseId)
+          )
+        )
+        .leftJoin(
+          variants,
+          and(
+            eq(variants.isActive, true),
+            eq(variants.exerciseId, plansExercises.exerciseId),
+            eq(variants.userId, planFound.userId)
+          )
+        )
+        .leftJoin(plansCategories, eq(plansCategories.id, exercises.categoryId))
+        .leftJoin(
+          exercisesCategories,
+          eq(exercisesCategories.id, exercises.categoryId)
+        )
         .where(
           and(eq(plansDays.planId, planFound.id), eq(plansDays.isActive, true))
         );
 
-      // Agrupar circuitos por día
       let circuitsByDay: any = {};
 
-      planDaysList.forEach((planDay) => {
+      planDaysList.forEach((planDay: any) => {
         const {
+          circuit,
           planDayId,
-          dayOfWeekId,
-          dayOfWeekName,
-          dayOfWeekOrder,
-          circuitId,
-          circuitOrder,
-          circuitDescription,
-          circuitIsActive,
+          dayOfWeek,
+          exercises,
+          variants,
+          exerciseDescription,
+          exercisesCategories,
         } = planDay;
 
         if (!circuitsByDay[planDayId]) {
           circuitsByDay[planDayId] = {
-            dayOfWeek: {
-              id: dayOfWeekId,
-              name: dayOfWeekName,
-              order: dayOfWeekOrder,
-            },
+            dayOfWeek: dayOfWeek,
             planDayId: planDayId,
             circuits: [],
           };
         }
 
-        if (circuitId) {
-          const existingCircuit = circuitsByDay[planDayId].circuits.find(
-            (circuit: any) => circuit.id === circuitId
+        if (circuit?.id) {
+          let existingCircuit = circuitsByDay[planDayId].circuits.find(
+            (obj: any) => obj.id === circuit.id
           );
 
           if (!existingCircuit) {
-            circuitsByDay[planDayId].circuits.unshift({
-              id: circuitId,
-              order: circuitOrder,
-              description: circuitDescription,
-              isActive: circuitIsActive,
-              exercises: [], // Inicialmente vacío
+            existingCircuit = {
+              ...circuit,
+              exercises: [],
+            };
+            circuitsByDay[planDayId].circuits.unshift(existingCircuit);
+          }
+
+          if (exercises) {
+            existingCircuit.exercises.unshift({
+              ...ExerciseEntity.create({
+                ...exercises,
+                category: ExerciseCategoryEntity.create(exercisesCategories),
+                variant: variants
+                  ? VariantEntity.create({
+                      ...variants,
+                      category:
+                        ExerciseCategoryEntity.create(exercisesCategories),
+                    })
+                  : null,
+                description: exerciseDescription,
+              }),
+              hasVariant: Boolean(variants),
             });
           }
         }
       });
-      // console.log("=======");
-      // console.log(
-      //   Object.values(circuitsByDay).forEach((day: any) =>
-      //     console.log(day.circuits)
-      //   )
-      // );
 
       circuitsByDay = Object.values(circuitsByDay).map((day: any) => {
         return PlanDayEntity.create({
@@ -534,10 +564,6 @@ export class PlanRepositoryImpl implements PlanRepository {
           ),
         });
       });
-      console.log(
-        "test",
-        circuitsByDay.forEach((circuit: any) => console.log(circuit))
-      );
 
       // // Buscar los ejercicios asociados a cada circuito
       // const planExercisesList = await db
@@ -588,7 +614,7 @@ export class PlanRepositoryImpl implements PlanRepository {
       //   dayOfWeek: day.dayOfWeek,
       //   circuits: day.circuits,
       // }));
-      console.log(planFound);
+      // console.log(planFound);
 
       return PlanEntity.create({
         id: planFound.id,
@@ -607,7 +633,6 @@ export class PlanRepositoryImpl implements PlanRepository {
       throw CustomError.internalServer();
     }
   }
-
   async updateWeeklyPlan(
     updateWeeklyPlanDto: UpdateWeeklyPlanDto
   ): Promise<PlanEntity | CustomError> {
