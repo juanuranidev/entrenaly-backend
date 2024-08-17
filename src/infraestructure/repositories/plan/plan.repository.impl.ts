@@ -34,7 +34,7 @@ import { PlanCircuitEntity } from "../../../domain/entities/plan/plan-circuit.en
 export class PlanRepositoryImpl implements PlanRepository {
   async createWeeklyPlan(
     createWeeklyPlanDto: CreateWeeklyPlanDto
-  ): Promise<PlanEntity | CustomError> {
+  ): Promise<PlanEntity> {
     try {
       return await db.transaction(async (tx) => {
         const [planTypeFound] = await tx
@@ -107,7 +107,7 @@ export class PlanRepositoryImpl implements PlanRepository {
   }
   async createCircuitPlan(
     createCircuitPlanDto: CreateCircuitPlanDto
-  ): Promise<PlanEntity | CustomError> {
+  ): Promise<PlanEntity> {
     try {
       return await db.transaction(async (tx) => {
         const [planTypeFound] = await tx
@@ -189,7 +189,7 @@ export class PlanRepositoryImpl implements PlanRepository {
       throw CustomError.internalServer();
     }
   }
-  async readPlansTypes(): Promise<PlanTypeEntity[] | CustomError> {
+  async readPlansTypes(): Promise<PlanTypeEntity[]> {
     try {
       const plansTypesList = await db.select().from(plansTypes);
 
@@ -202,7 +202,7 @@ export class PlanRepositoryImpl implements PlanRepository {
       throw CustomError.internalServer();
     }
   }
-  async readDaysOfWeek(): Promise<DayOfWeekEntity[] | CustomError> {
+  async readDaysOfWeek(): Promise<DayOfWeekEntity[]> {
     try {
       const daysOfWeekList = await db.select().from(daysOfWeek);
 
@@ -217,7 +217,7 @@ export class PlanRepositoryImpl implements PlanRepository {
       throw CustomError.internalServer();
     }
   }
-  async readPlansCategories(): Promise<PlanCategoryEntity[] | CustomError> {
+  async readPlansCategories(): Promise<PlanCategoryEntity[]> {
     try {
       const planCategoriesList = await db.select().from(plansCategories);
 
@@ -232,7 +232,7 @@ export class PlanRepositoryImpl implements PlanRepository {
       throw CustomError.internalServer();
     }
   }
-  async readPlansByUserId(userId: string): Promise<PlanEntity[] | CustomError> {
+  async readPlansByUserId(userId: string): Promise<PlanEntity[]> {
     try {
       const plansList = await db
         .select({
@@ -261,9 +261,7 @@ export class PlanRepositoryImpl implements PlanRepository {
       throw CustomError.internalServer();
     }
   }
-  async readPlansByClientId(
-    clientId: string
-  ): Promise<PlanEntity[] | CustomError> {
+  async readPlansByClientId(clientId: string): Promise<PlanEntity[]> {
     try {
       const plansList = await db
         .select({
@@ -297,7 +295,7 @@ export class PlanRepositoryImpl implements PlanRepository {
       throw CustomError.internalServer();
     }
   }
-  async readWeeklyPlan(planId: string): Promise<PlanEntity | CustomError> {
+  async readWeeklyPlan(planId: string): Promise<PlanEntity> {
     try {
       const [planFound] = await db
         .select({
@@ -427,7 +425,7 @@ export class PlanRepositoryImpl implements PlanRepository {
       throw CustomError.internalServer();
     }
   }
-  async readCircuitPlan(planId: string): Promise<PlanEntity | CustomError> {
+  async readCircuitPlan(planId: string): Promise<PlanEntity> {
     try {
       const [planFound] = await db
         .select({
@@ -635,7 +633,7 @@ export class PlanRepositoryImpl implements PlanRepository {
   }
   async updateWeeklyPlan(
     updateWeeklyPlanDto: UpdateWeeklyPlanDto
-  ): Promise<PlanEntity | CustomError> {
+  ): Promise<PlanEntity> {
     try {
       return await db.transaction(async (tx) => {
         const [planUpdated] = await tx
@@ -746,7 +744,7 @@ export class PlanRepositoryImpl implements PlanRepository {
   }
   async updateCircuitPlan(
     updateCircuitPlanDto: UpdateCircuitPlanDto
-  ): Promise<PlanEntity | CustomError> {
+  ): Promise<PlanEntity> {
     try {
       return await db.transaction(async (tx) => {
         const [planUpdated] = await tx
@@ -861,10 +859,7 @@ export class PlanRepositoryImpl implements PlanRepository {
       throw CustomError.internalServer();
     }
   }
-  async deleteWeeklyPlan(
-    planId: string,
-    userId: string
-  ): Promise<PlanEntity | CustomError> {
+  async deleteWeeklyPlan(planId: string, userId: string): Promise<PlanEntity> {
     try {
       return await db.transaction(async (tx) => {
         const [planUpdated] = await tx

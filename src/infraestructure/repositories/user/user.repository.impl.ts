@@ -21,9 +21,7 @@ import { db } from "../../db";
 import { AppReleaseEntity } from "../../../domain/entities/plan/app-release";
 
 export class UserRepositoryImpl implements UserRepository {
-  async createUser(
-    registerUserDto: CreateUserDto
-  ): Promise<UserEntity | CustomError> {
+  async createUser(registerUserDto: CreateUserDto): Promise<UserEntity> {
     try {
       return await db.transaction(async (tx) => {
         let role;
@@ -104,7 +102,7 @@ export class UserRepositoryImpl implements UserRepository {
   }
   async createUserWithGoogleAuth(
     googleUserDto: CreateUserWithGoogleDto
-  ): Promise<UserEntity | CustomError> {
+  ): Promise<UserEntity> {
     try {
       const userExist = await this.readUserByAuthId(googleUserDto.authId);
 
@@ -127,7 +125,7 @@ export class UserRepositoryImpl implements UserRepository {
       throw CustomError.internalServer();
     }
   }
-  async readAppReleases(): Promise<AppReleaseEntity[] | CustomError> {
+  async readAppReleases(): Promise<AppReleaseEntity[]> {
     try {
       const appReleaseList = await db.select().from(appReleases);
 
@@ -142,7 +140,7 @@ export class UserRepositoryImpl implements UserRepository {
       throw CustomError.internalServer();
     }
   }
-  async readUser(id: string): Promise<UserEntity | CustomError> {
+  async readUser(id: string): Promise<UserEntity> {
     try {
       const [userFound] = await db
         .select({

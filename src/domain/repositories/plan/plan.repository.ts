@@ -1,5 +1,4 @@
 import { PlanEntity } from "../../entities/plan/plan.entity";
-import { CustomError } from "../../errors/custom.error";
 import { PlanTypeEntity } from "../../entities/plan/plan-type.entity";
 import { DayOfWeekEntity } from "../../entities/plan/day-of-week.entity";
 import { PlanCategoryEntity } from "../../entities/plan/plan-category.entity";
@@ -11,29 +10,22 @@ import { UpdateCircuitPlanDto } from "../../dtos/plan/update-circuit-plan.dto";
 export abstract class PlanRepository {
   abstract createWeeklyPlan(
     createWeeklyPlanDto: CreateWeeklyPlanDto
-  ): Promise<PlanEntity | CustomError>;
+  ): Promise<PlanEntity>;
   abstract createCircuitPlan(
     createCircuitPlanDto: CreateCircuitPlanDto
-  ): Promise<PlanEntity | CustomError>;
-  abstract readPlansTypes(): Promise<PlanTypeEntity[] | CustomError>;
-  abstract readDaysOfWeek(): Promise<DayOfWeekEntity[] | CustomError>;
-  abstract readPlansCategories(): Promise<PlanCategoryEntity[] | CustomError>;
-  abstract readPlansByUserId(
-    userId: string
-  ): Promise<PlanEntity[] | CustomError>;
-  abstract readPlansByClientId(
-    clientId: any
-  ): Promise<PlanEntity[] | CustomError>;
-  abstract readWeeklyPlan(planId: any): Promise<PlanEntity | CustomError>;
-  abstract readCircuitPlan(planId: any): Promise<PlanEntity | CustomError>;
+  ): Promise<PlanEntity>;
+  abstract readPlansTypes(): Promise<PlanTypeEntity[]>;
+  abstract readDaysOfWeek(): Promise<DayOfWeekEntity[]>;
+  abstract readPlansCategories(): Promise<PlanCategoryEntity[]>;
+  abstract readPlansByUserId(userId: string): Promise<PlanEntity[]>;
+  abstract readPlansByClientId(clientId: any): Promise<PlanEntity[]>;
+  abstract readWeeklyPlan(planId: any): Promise<PlanEntity>;
+  abstract readCircuitPlan(planId: any): Promise<PlanEntity>;
   abstract updateWeeklyPlan(
     updateWeeklyPlanDto: UpdateWeeklyPlanDto
-  ): Promise<PlanEntity | CustomError>;
+  ): Promise<PlanEntity>;
   abstract updateCircuitPlan(
     updateCircuitPlanDto: UpdateCircuitPlanDto
-  ): Promise<PlanEntity | CustomError>;
-  abstract deleteWeeklyPlan(
-    planId: any,
-    userId: string
-  ): Promise<PlanEntity | CustomError>;
+  ): Promise<PlanEntity>;
+  abstract deleteWeeklyPlan(planId: any, userId: string): Promise<PlanEntity>;
 }

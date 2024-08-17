@@ -20,7 +20,7 @@ import { db } from "../../db";
 export class ExerciseRepositoryImpl implements ExerciseRepository {
   async createExercise(
     createExerciseDto: CreateExerciseDto
-  ): Promise<ExerciseEntity | CustomError> {
+  ): Promise<ExerciseEntity> {
     try {
       const [newExercise] = await db
         .insert(exercises)
@@ -58,7 +58,7 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
   }
   async createVariant(
     createVariantDto: CreateVariantDto
-  ): Promise<VariantEntity | CustomError> {
+  ): Promise<VariantEntity> {
     try {
       const [newVariant] = await db
         .insert(variants)
@@ -90,7 +90,7 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
   }
   async createExerciseDescription(
     createExerciseDescriptionDto: CreateExerciseDescriptionDto
-  ): Promise<ExerciseDescriptionEntity | CustomError> {
+  ): Promise<ExerciseDescriptionEntity> {
     try {
       const [newExerciseDescription] = await db
         .insert(exercisesDescriptions)
@@ -117,7 +117,7 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
     userId: string,
     name?: string,
     exerciseCategoryId?: any
-  ): Promise<ExerciseEntity[] | CustomError> {
+  ): Promise<ExerciseEntity[]> {
     try {
       const exercisesList = await db
         .select({
@@ -173,9 +173,7 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
       throw CustomError.internalServer();
     }
   }
-  async readExercisesCategories(): Promise<
-    ExerciseCategoryEntity[] | CustomError
-  > {
+  async readExercisesCategories(): Promise<ExerciseCategoryEntity[]> {
     try {
       const exercisesCategoriesList = await db
         .select({
@@ -197,7 +195,7 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
   }
   async readExercisesDescriptions(
     userId: string
-  ): Promise<ExerciseDescriptionEntity[] | CustomError> {
+  ): Promise<ExerciseDescriptionEntity[]> {
     try {
       const exercisesDescriptionsList = await db
         .select({
@@ -220,7 +218,7 @@ export class ExerciseRepositoryImpl implements ExerciseRepository {
   }
   async updateVariant(
     updateVariantDto: UpdateVariantDto
-  ): Promise<VariantEntity | CustomError> {
+  ): Promise<VariantEntity> {
     try {
       const { name, video, userId, categoryId, image, variantId } =
         updateVariantDto;

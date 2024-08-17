@@ -8,7 +8,7 @@ import { ClientRepository } from "../../../domain/repositories/client/client.rep
 import { clients, invites, users } from "../../db/schemas";
 import { UpdateClientMedicalInformationDto } from "../../../domain/dtos/client/update-medical-information.dto";
 export class ClientRepositoryImpl implements ClientRepository {
-  async readClient(clientId: string): Promise<ClientEntity | CustomError> {
+  async readClient(clientId: string): Promise<ClientEntity> {
     try {
       const [clientFound] = await db
         .select({
@@ -38,7 +38,7 @@ export class ClientRepositoryImpl implements ClientRepository {
       throw CustomError.internalServer();
     }
   }
-  async readClients(userId: string): Promise<ClientEntity[] | CustomError> {
+  async readClients(userId: string): Promise<ClientEntity[]> {
     try {
       const clientsList = await db
         .select({
@@ -66,7 +66,7 @@ export class ClientRepositoryImpl implements ClientRepository {
       throw CustomError.internalServer();
     }
   }
-  async readInvite(userId: string): Promise<InviteEntity | CustomError> {
+  async readInvite(userId: string): Promise<InviteEntity> {
     try {
       const [inviteExist] = await db
         .select({ id: invites.id })
@@ -98,9 +98,7 @@ export class ClientRepositoryImpl implements ClientRepository {
       throw CustomError.internalServer();
     }
   }
-  async readInviteInformation(
-    invite: string
-  ): Promise<InviteEntity | CustomError> {
+  async readInviteInformation(invite: string): Promise<InviteEntity> {
     try {
       const [inviteFound] = await db
         .select({
@@ -113,7 +111,7 @@ export class ClientRepositoryImpl implements ClientRepository {
         .leftJoin(users, eq(users.id, invites.userId));
 
       if (!inviteFound) {
-        return CustomError.notFound("Invite not found");
+        throw CustomError.notFound("Invite not found");
       }
 
       return InviteEntity.create({
@@ -130,7 +128,7 @@ export class ClientRepositoryImpl implements ClientRepository {
   }
   async updateClientMedicalInformation(
     updateClientMedicalInformationDto: UpdateClientMedicalInformationDto
-  ): Promise<ClientEntity | CustomError> {
+  ): Promise<ClientEntity> {
     try {
       const {
         goals,
@@ -168,7 +166,7 @@ export class ClientRepositoryImpl implements ClientRepository {
   async updateClientOnboardingStatus(
     clientId: string,
     onboardingStatus: boolean
-  ): Promise<ClientEntity | CustomError> {
+  ): Promise<ClientEntity> {
     try {
       const [updatedClient] = await db
         .update(clients)
