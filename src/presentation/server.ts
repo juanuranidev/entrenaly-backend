@@ -27,7 +27,7 @@ export class Server {
     // Cors
     this.app.use(
       cors({
-        origin: ["https://entrenaly.vercel.app/"],
+        origin: ["*"],
       })
     );
 
