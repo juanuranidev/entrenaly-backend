@@ -227,14 +227,12 @@ Dentro de cada repositorio que se encuentre en la carpeta de domain definiremos 
 Ejemplo del repositorio de la entidad User  
 ```
 export abstract class UserRepository {
-  abstract readUser(id: string): Promise<UserEntity | CustomError>;
-  abstract readUserByAuthId(authId: string): Promise<UserEntity | CustomError>;
-  abstract createUser(
-    registerUser: CreateUserDto
-  ): Promise<UserEntity | CustomError>;
+  abstract readUser(id: string): Promise<UserEntity>;
+  abstract readUserByAuthId(authId: string): Promise<UserEntity>;
+  abstract createUser(registerUser: CreateUserDto): Promise<UserEntity>;
   abstract createUserWithGoogleAuth(
     googleUserDto: CreateUserWithGoogleDto
-  ): Promise<UserEntity | CustomError>;
+  ): Promise<UserEntity>;
 }
 ```
 
@@ -518,7 +516,7 @@ export class UsuarioEntidad {
 **Errors**  
 This folder has a simple purpose, to unify error handling within our application.  
 ```
-export class ErrorCustomError extends Error {
+export class CustomError extends Error {
   private constructor(
     public readonly statusCode: number,
     public readonly message: string
@@ -551,14 +549,12 @@ Within each repository that is in the domain folder we will define how the funct
 Example of the repository of the entity User  
 ```
 export abstract class UserRepository {
-  abstract readUser(id: string): Promise<UserEntity | CustomError>;
-  abstract readUserByAuthId(authId: string): Promise<UserEntity | CustomError>;
-  abstract createUser(
-    registerUser: CreateUserDto
-  ): Promise<UserEntity | CustomError>;
+  abstract readUser(id: string): Promise<UserEntity>;
+  abstract readUserByAuthId(authId: string): Promise<UserEntity>;
+  abstract createUser(registerUser: CreateUserDto): Promise<UserEntity>;
   abstract createUserWithGoogleAuth(
     googleUserDto: CreateUserWithGoogleDto
-  ): Promise<UserEntity | CustomError>;
+  ): Promise<UserEntity>;
 }
 ```
 
