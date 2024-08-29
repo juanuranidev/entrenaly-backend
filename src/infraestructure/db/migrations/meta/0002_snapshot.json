@@ -1,10 +1,8 @@
 {
-  "id": "5d04136f-6372-4c2d-8acd-57799a5e7e77",
-  "prevId": "d0a620dd-959f-424a-8bee-ba29dd3e8ee8",
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "clients": {
+    "public.clients": {
       "name": "clients",
       "schema": "",
       "columns": {
@@ -90,7 +88,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "invites": {
+    "public.invites": {
       "name": "invites",
       "schema": "",
       "columns": {
@@ -113,14 +111,14 @@
       "uniqueConstraints": {
         "invites_user_id_unique": {
           "name": "invites_user_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "user_id"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "exercises": {
+    "public.exercises": {
       "name": "exercises",
       "schema": "",
       "columns": {
@@ -173,34 +171,34 @@
         "exercises_category_id_exercises_categories_id_fk": {
           "name": "exercises_category_id_exercises_categories_id_fk",
           "tableFrom": "exercises",
-          "tableTo": "exercises_categories",
           "columnsFrom": [
             "category_id"
           ],
+          "tableTo": "exercises_categories",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "exercises_user_id_users_id_fk": {
           "name": "exercises_user_id_users_id_fk",
           "tableFrom": "exercises",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "exercises_categories": {
+    "public.exercises_categories": {
       "name": "exercises_categories",
       "schema": "",
       "columns": {
@@ -222,7 +220,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "exercises_descriptions": {
+    "public.exercises_descriptions": {
       "name": "exercises_descriptions",
       "schema": "",
       "columns": {
@@ -250,21 +248,21 @@
         "exercises_descriptions_user_id_users_id_fk": {
           "name": "exercises_descriptions_user_id_users_id_fk",
           "tableFrom": "exercises_descriptions",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "variants": {
+    "public.variants": {
       "name": "variants",
       "schema": "",
       "columns": {
@@ -323,47 +321,47 @@
         "variants_category_id_exercises_categories_id_fk": {
           "name": "variants_category_id_exercises_categories_id_fk",
           "tableFrom": "variants",
-          "tableTo": "exercises_categories",
           "columnsFrom": [
             "category_id"
           ],
+          "tableTo": "exercises_categories",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "variants_user_id_users_id_fk": {
           "name": "variants_user_id_users_id_fk",
           "tableFrom": "variants",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "variants_exercise_id_exercises_id_fk": {
           "name": "variants_exercise_id_exercises_id_fk",
           "tableFrom": "variants",
-          "tableTo": "exercises",
           "columnsFrom": [
             "exercise_id"
           ],
+          "tableTo": "exercises",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "roles": {
+    "public.roles": {
       "name": "roles",
       "schema": "",
       "columns": {
@@ -385,7 +383,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "subscription_plans": {
+    "public.subscription_plans": {
       "name": "subscription_plans",
       "schema": "",
       "columns": {
@@ -407,7 +405,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "users": {
+    "public.users": {
       "name": "users",
       "schema": "",
       "columns": {
@@ -473,56 +471,56 @@
         "users_role_id_roles_id_fk": {
           "name": "users_role_id_roles_id_fk",
           "tableFrom": "users",
-          "tableTo": "roles",
           "columnsFrom": [
             "role_id"
           ],
+          "tableTo": "roles",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "users_subscription_plan_subscription_plans_id_fk": {
           "name": "users_subscription_plan_subscription_plans_id_fk",
           "tableFrom": "users",
-          "tableTo": "subscription_plans",
           "columnsFrom": [
             "subscription_plan"
           ],
+          "tableTo": "subscription_plans",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "users_id_unique": {
           "name": "users_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "id"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "users_email_unique": {
           "name": "users_email_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "users_auth_id_unique": {
           "name": "users_auth_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "auth_id"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "clients_plans": {
+    "public.clients_plans": {
       "name": "clients_plans",
       "schema": "",
       "columns": {
@@ -557,34 +555,34 @@
         "clients_plans_client_id_clients_id_fk": {
           "name": "clients_plans_client_id_clients_id_fk",
           "tableFrom": "clients_plans",
-          "tableTo": "clients",
           "columnsFrom": [
             "client_id"
           ],
+          "tableTo": "clients",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "clients_plans_plan_id_plans_id_fk": {
           "name": "clients_plans_plan_id_plans_id_fk",
           "tableFrom": "clients_plans",
-          "tableTo": "plans",
           "columnsFrom": [
             "plan_id"
           ],
+          "tableTo": "plans",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "days_of_week": {
+    "public.days_of_week": {
       "name": "days_of_week",
       "schema": "",
       "columns": {
@@ -612,7 +610,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "plans": {
+    "public.plans": {
       "name": "plans",
       "schema": "",
       "columns": {
@@ -673,55 +671,55 @@
         "plans_category_id_plans_categories_id_fk": {
           "name": "plans_category_id_plans_categories_id_fk",
           "tableFrom": "plans",
-          "tableTo": "plans_categories",
           "columnsFrom": [
             "category_id"
           ],
+          "tableTo": "plans_categories",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "plans_type_id_plans_types_id_fk": {
           "name": "plans_type_id_plans_types_id_fk",
           "tableFrom": "plans",
-          "tableTo": "plans_types",
           "columnsFrom": [
             "type_id"
           ],
+          "tableTo": "plans_types",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "plans_user_id_users_id_fk": {
           "name": "plans_user_id_users_id_fk",
           "tableFrom": "plans",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "plans_id_unique": {
           "name": "plans_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "id"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "plans_categories": {
+    "public.plans_categories": {
       "name": "plans_categories",
       "schema": "",
       "columns": {
@@ -743,7 +741,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "plans_days": {
+    "public.plans_days": {
       "name": "plans_days",
       "schema": "",
       "columns": {
@@ -778,34 +776,34 @@
         "plans_days_plan_id_plans_id_fk": {
           "name": "plans_days_plan_id_plans_id_fk",
           "tableFrom": "plans_days",
-          "tableTo": "plans",
           "columnsFrom": [
             "plan_id"
           ],
+          "tableTo": "plans",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "plans_days_day_of_week_id_days_of_week_id_fk": {
           "name": "plans_days_day_of_week_id_days_of_week_id_fk",
           "tableFrom": "plans_days",
-          "tableTo": "days_of_week",
           "columnsFrom": [
             "day_of_week_id"
           ],
+          "tableTo": "days_of_week",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "plans_exercises": {
+    "public.plans_exercises": {
       "name": "plans_exercises",
       "schema": "",
       "columns": {
@@ -853,34 +851,34 @@
         "plans_exercises_plan_day_id_plans_days_id_fk": {
           "name": "plans_exercises_plan_day_id_plans_days_id_fk",
           "tableFrom": "plans_exercises",
-          "tableTo": "plans_days",
           "columnsFrom": [
             "plan_day_id"
           ],
+          "tableTo": "plans_days",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "plans_exercises_exercise_id_exercises_id_fk": {
           "name": "plans_exercises_exercise_id_exercises_id_fk",
           "tableFrom": "plans_exercises",
-          "tableTo": "exercises",
           "columnsFrom": [
             "exercise_id"
           ],
+          "tableTo": "exercises",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "plans_types": {
+    "public.plans_types": {
       "name": "plans_types",
       "schema": "",
       "columns": {
@@ -906,8 +904,10 @@
   "enums": {},
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "5d04136f-6372-4c2d-8acd-57799a5e7e77",
+  "prevId": "d0a620dd-959f-424a-8bee-ba29dd3e8ee8"
 }

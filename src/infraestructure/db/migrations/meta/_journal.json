@@ -50,6 +50,13 @@
       "when": 1723431618340,
       "tag": "0006_steep_doctor_doom",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1724969559719,
+      "tag": "0007_gray_black_panther",
+      "breakpoints": true
     }
   ]
 }
