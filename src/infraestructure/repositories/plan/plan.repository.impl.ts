@@ -384,16 +384,16 @@ export class PlanRepositoryImpl implements PlanRepository {
         exercisesByDay[dayOfWeek.id].exercises.unshift({
           ...(exercises
             ? ExerciseEntity.create({
-                ...exercises,
-                category: ExerciseCategoryEntity.create(exercisesCategories),
-                variant: variants
-                  ? VariantEntity.create({
-                      ...variants,
-                      category:
-                        ExerciseCategoryEntity.create(exercisesCategories),
-                    })
-                  : null,
-              })
+              ...exercises,
+              category: ExerciseCategoryEntity.create(exercisesCategories),
+              variant: variants
+                ? VariantEntity.create({
+                  ...variants,
+                  category:
+                    ExerciseCategoryEntity.create(exercisesCategories),
+                })
+                : null,
+            })
             : null),
           description: description,
           hasVariant: Boolean(variants),
@@ -537,10 +537,10 @@ export class PlanRepositoryImpl implements PlanRepository {
                 category: ExerciseCategoryEntity.create(exercisesCategories),
                 variant: variants
                   ? VariantEntity.create({
-                      ...variants,
-                      category:
-                        ExerciseCategoryEntity.create(exercisesCategories),
-                    })
+                    ...variants,
+                    category:
+                      ExerciseCategoryEntity.create(exercisesCategories),
+                  })
                   : null,
                 description: exerciseDescription,
               }),
@@ -612,7 +612,6 @@ export class PlanRepositoryImpl implements PlanRepository {
       //   dayOfWeek: day.dayOfWeek,
       //   circuits: day.circuits,
       // }));
-      // console.log(planFound);
 
       return PlanEntity.create({
         id: planFound.id,
